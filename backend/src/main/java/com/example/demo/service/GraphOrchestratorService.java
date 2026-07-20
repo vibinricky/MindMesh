@@ -1,0 +1,66 @@
+package com.example.demo.service;
+
+import com.example.demo.dto.GraphDto;
+import com.example.demo.entity.KnowledgeGraph;
+import com.example.demo.entity.SystemAccount;
+import com.example.demo.event.ComplexityCalculatedEvent;
+import com.example.demo.event.GraphCreatedEvent;
+import com.example.demo.event.GraphDeletedEvent;
+import com.example.demo.event.GraphUpdatedEvent;
+import com.example.demo.repository.KnowledgeGraphRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class GraphOrchestratorService {
+
+    @Autowired
+    private GraphService graphService;
+    
+    @Autowired
+    private KnowledgeGraphRepository knowledgeGraphRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Transactional
+    public KnowledgeGraph createGraphWithEvents(GraphDto graphDto) {
+        KnowledgeGraph graph = graphService.createGraph(graphDto);
+        eventPublisher.publishEvent(new GraphCreatedEvent(this, graph.getId(), graph.getOwner().getId()));
+        return graph;
+    }
+
+    @Transactional
+    public KnowledgeGraph updateGraphWithEvents(Long id, GraphDto graphDto) {
+        KnowledgeGraph graph = graphService.updateGraph(id, graphDto);
+        SystemAccount user = graphService.getCurrentUser();
+        eventPublisher.publishEvent(new GraphUpdatedEvent(this, graph.getId(), user.getId()));
+        return graph;
+    }
+
+    @Transactional
+    public void deleteGraphWithEvents(Long id) {
+        SystemAccount user = graphService.getCurrentUser();
+        graphService.deleteGraph(id);
+        eventPublisher.publishEvent(new GraphDeletedEvent(this, id, user.getId()));
+    }
+
+    @Transactional
+    public Double calculateComplexity(Long graphId) {
+        KnowledgeGraph graph = graphService.getGraphById(graphId);
+        int nodeCount = graph.getNodes().size();
+        int edgeCount = graph.getEdges().size();
+        
+        // Simple mock complexity calculation for demo
+        double score = (nodeCount * 0.4) + (edgeCount * 0.6);
+        graph.setComplexityScore(score);
+        knowledgeGraphRepository.save(graph);
+        
+        SystemAccount user = graphService.getCurrentUser();
+        eventPublisher.publishEvent(new ComplexityCalculatedEvent(this, graphId, user.getId()));
+        
+        return score;
+    }
+}
