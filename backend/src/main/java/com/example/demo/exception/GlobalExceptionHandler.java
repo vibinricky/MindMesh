@@ -31,6 +31,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(org.springframework.dao.DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleConflictException(org.springframework.dao.DataIntegrityViolationException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", "Conflict occurred: Data integrity violation");
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGlobalException(Exception ex) {
         Map<String, String> error = new HashMap<>();

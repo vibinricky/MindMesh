@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/api/edges")
 public class EdgeController {
@@ -21,6 +23,7 @@ public class EdgeController {
     private GraphService graphService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<SemanticEdge> createEdge(@RequestBody SemanticEdge edge) {
         if (edge.getKnowledgeGraph() != null && edge.getKnowledgeGraph().getId() != null) {
             KnowledgeGraph graph = graphService.getGraphById(edge.getKnowledgeGraph().getId());
