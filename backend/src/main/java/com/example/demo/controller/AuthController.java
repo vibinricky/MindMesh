@@ -33,5 +33,5 @@ public class AuthController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> ping() {
         return ResponseEntity.ok("pong");
-    }
+    } 
 }
