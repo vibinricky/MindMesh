@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+
 @RestController
 @RequestMapping("/api/nodes")
 public class NodeController {
@@ -21,6 +23,7 @@ public class NodeController {
     private GraphService graphService;
 
     @PostMapping("/validate-layout/{graphId}")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ConceptNode> validateLayoutAndAddNode(@PathVariable Long graphId, @RequestBody ConceptNode node) {
         KnowledgeGraph graph = graphService.getGraphById(graphId);
         node.setKnowledgeGraph(graph);

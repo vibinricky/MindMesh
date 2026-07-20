@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.GraphDto;
 import com.example.demo.entity.KnowledgeGraph;
+import java.util.List;
 import com.example.demo.entity.SystemAccount;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.KnowledgeGraphRepository;
@@ -29,6 +30,10 @@ public class GraphService {
 
     public Page<KnowledgeGraph> getPublicGraphs(Pageable pageable) {
         return knowledgeGraphRepository.findAllPublicGraphs(pageable);
+    }
+
+    public List<KnowledgeGraph> getAll() {
+        return knowledgeGraphRepository.findAll();
     }
 
     public KnowledgeGraph getGraphById(Long id) {
@@ -59,6 +64,14 @@ public class GraphService {
     public void deleteGraph(Long id) {
         KnowledgeGraph graph = getGraphById(id);
         knowledgeGraphRepository.delete(graph);
+    }
+
+    public KnowledgeGraph save(KnowledgeGraph entity) {
+        return knowledgeGraphRepository.save(entity);
+    }
+
+    public void delete(Long id) {
+        knowledgeGraphRepository.deleteById(id);
     }
     
     public Page<KnowledgeGraph> searchGraphs(String query, Pageable pageable) {

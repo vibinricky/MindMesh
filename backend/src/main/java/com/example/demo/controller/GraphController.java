@@ -16,8 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/graphs")
+@PreAuthorize("isAuthenticated()")
 public class GraphController {
 
     @Autowired
@@ -30,10 +34,8 @@ public class GraphController {
     private ActivityLogRepository activityLogRepository;
 
     @GetMapping
-    public ResponseEntity<Page<KnowledgeGraph>> getAllGraphs(@RequestParam(defaultValue = "0") int page,
-                                                             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(graphService.getMyGraphs(pageable)); // Assuming default gets user's graphs or all public?
+    public ResponseEntity<List<KnowledgeGraph>> getAll() {
+        return ResponseEntity.ok(graphService.getAll());
     }
 
     @GetMapping("/my")
@@ -59,12 +61,13 @@ public class GraphController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<KnowledgeGraph> getGraphById(@PathVariable Long id) {
+    public ResponseEntity<KnowledgeGraph> getById(@PathVariable Long id) {
         return ResponseEntity.ok(graphService.getGraphById(id));
     }
 
     @PostMapping
-    public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody GraphDto graphDto) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<KnowledgeGraph> create(@Valid @RequestBody GraphDto graphDto) {
         KnowledgeGraph created = graphOrchestratorService.createGraphWithEvents(graphDto);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
@@ -76,12 +79,13 @@ public class GraphController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteGraph(@PathVariable Long id) {
+    public ResponseEntity<String> delete(@PathVariable Long id) {
         graphOrchestratorService.deleteGraphWithEvents(id);
-        return ResponseEntity.ok("KnowledgeGraph deleted successfully.");
+        return ResponseEntity.ok("KnowledgeGraph deleted successfully");
     }
 
     @PostMapping("/{id}/calculate-complexity")
+    @PreAuthorize("hasRole('DOMAIN_ROLE')")
     public ResponseEntity<Double> calculateComplexity(@PathVariable Long id) {
         Double score = graphOrchestratorService.calculateComplexity(id);
         return ResponseEntity.ok(score);
@@ -96,6 +100,7 @@ public class GraphController {
     }
 
     @GetMapping("/activity/all")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ActivityLog>> getAllActivity(@RequestParam(defaultValue = "0") int page,
                                                             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);

@@ -5,8 +5,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 @Entity
-@Table(name = "knowledge_graph")
+@Table(name = "knowledge_graphs")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class KnowledgeGraph {
 
     @Id
@@ -53,7 +62,7 @@ public class KnowledgeGraph {
         updatedAt = LocalDateTime.now();
     }
 
-    public KnowledgeGraph() {}
+    // lombok handles constructors
 
     public Long getId() {
         return id;
