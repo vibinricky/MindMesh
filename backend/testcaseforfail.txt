@@ -1,0 +1,193 @@
+// T8: DELETE /{id} – returns 200 and plain text message
+    @Test
+    public void t8_deleteEndpointReturnsExactMessage() {
+        try {
+            Class<?> controllerClass = Class.forName("com.example.demo.controller.GraphController");
+            Class<?> serviceClass = Class.forName("com.example.demo.service.GraphOrchestratorService");
+            Class<?> entityClass = Class.forName("com.example.demo.entity.KnowledgeGraph");
+            Class<?> systemAccountClass = Class.forName("com.example.demo.entity.SystemAccount");
+            Class<?> repoClass = Class.forName("com.example.demo.repository.KnowledgeGraphRepository");
+
+            // Mock graph
+            Object graph = entityClass.getDeclaredConstructor().newInstance();
+            Method setTitle = entityClass.getMethod("setTitle", String.class);
+            setTitle.invoke(graph, "T");
+            Object owner = systemAccountClass.getDeclaredConstructor().newInstance();
+            Method setOwnerId = systemAccountClass.getMethod("setId", Long.class);
+            setOwnerId.invoke(owner, 1L);
+            Method setOwner = entityClass.getMethod("setOwner", systemAccountClass);
+            setOwner.invoke(graph, owner);
+
+            // Repository: findById(1L) returns graph, deleteById does nothing
+            Object repoProxy = Proxy.newProxyInstance(
+                    repoClass.getClassLoader(),
+                    new Class<?>[]{repoClass},
+                    (proxy, method, args) -> {
+                        if (method.getName().equals("findById") && args != null && args.length > 0 && args[0].equals(1L)) {
+                            return Optional.of(graph);
+                        }
+                        if (method.getName().equals("deleteById")) {
+                            return null;
+                        }
+                        return null;
+                    }
+            );
+
+            // Build service (class) and controller
+            Class<?> eventPublisherClass = Class.forName("org.springframework.context.ApplicationEventPublisher");
+            Object eventProxy = Proxy.newProxyInstance(
+                    eventPublisherClass.getClassLoader(),
+                    new Class<?>[]{eventPublisherClass},
+                    (proxy, method, args) -> null
+            );
+            Constructor<?> svcCtor = serviceClass.getDeclaredConstructor(repoClass, eventPublisherClass);
+            svcCtor.setAccessible(true);
+            Object service = svcCtor.newInstance(repoProxy, eventProxy);
+
+            Object controller = createController(controllerClass, service);
+
+            // Find delete method (should be @DeleteMapping with value "{id}")
+            Method deleteMethod = null;
+            for (Method m : controllerClass.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(getAnnotationClass("org.springframework.web.bind.annotation.DeleteMapping"))) {
+                    deleteMethod = m;
+                    break;
+                }
+            }
+            Assert.assertNotNull(deleteMethod, "No DeleteMapping method found");
+            deleteMethod.setAccessible(true);
+
+            // Invoke with id=1
+            Object result = deleteMethod.invoke(controller, 1L);
+            Assert.assertNotNull(result);
+            if (result instanceof ResponseEntity) {
+                ResponseEntity<?> re = (ResponseEntity<?>) result;
+                Assert.assertEquals(re.getStatusCode(), HttpStatus.OK);
+                Assert.assertEquals(re.getBody(), "KnowledgeGraph deleted successfully.");
+            } else {
+                Assert.fail("Expected ResponseEntity");
+            }
+        } catch (ClassNotFoundException e) {
+            Assert.fail("Required class not found: " + e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("DELETE test failed: " + e.getMessage());
+        }
+    }
+
+    // T9: POST / – returns 201 Created with saved entity
+    @Test
+    public void t9_createEndpointReturnsCreatedStatus() {
+        // SRS_REF: GraphController POST / - "Receives a KnowledgeGraph body. Creates the graph and saves a CREATE audit log."
+        try {
+            Class<?> controllerClass = Class.forName("com.example.demo.controller.GraphController");
+            Class<?> entityClass = Class.forName("com.example.demo.entity.KnowledgeGraph");
+
+            Method createMethod = null;
+            for (Method m : controllerClass.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(getAnnotationClass("org.springframework.web.bind.annotation.PostMapping"))) {
+                    createMethod = m;
+                    break;
+                }
+            }
+            Assert.assertNotNull(createMethod, "No PostMapping method found in GraphController");
+            Assert.assertEquals(createMethod.getReturnType(), ResponseEntity.class);
+
+            boolean acceptsGraphBody = Arrays.stream(createMethod.getParameterTypes())
+                    .anyMatch(t -> t.equals(entityClass));
+            Assert.assertTrue(acceptsGraphBody, "POST / method does not accept a KnowledgeGraph body");
+        } catch (ClassNotFoundException e) {
+            Assert.fail("Required class not found: " + e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("CREATE endpoint validation failed: " + e.getMessage());
+        }
+    }
+ // T11: GET /{id} – returns 200 and entity
+    @Test
+    public void t11_getByIdEndpointReturnsEntity() {
+        try {
+            Class<?> controllerClass = Class.forName("com.example.demo.controller.GraphController");
+            Class<?> serviceClass = Class.forName("com.example.demo.service.GraphOrchestratorService");
+            Class<?> entityClass = Class.forName("com.example.demo.entity.KnowledgeGraph");
+            Class<?> repoClass = Class.forName("com.example.demo.repository.KnowledgeGraphRepository");
+
+            Object graph = entityClass.getDeclaredConstructor().newInstance();
+            Method setId = entityClass.getMethod("setId", Long.class);
+            setId.invoke(graph, 1L);
+
+            // Repository: findById(1L) returns the graph
+            Object repoProxy = Proxy.newProxyInstance(
+                    repoClass.getClassLoader(),
+                    new Class<?>[]{repoClass},
+                    (proxy, method, args) -> {
+                        if (method.getName().equals("findById") && args != null && args.length > 0 && args[0].equals(1L)) {
+                            return Optional.of(graph);
+                        }
+                        return Optional.empty();
+                    }
+            );
+
+            Class<?> eventPublisherClass = Class.forName("org.springframework.context.ApplicationEventPublisher");
+            Object eventProxy = Proxy.newProxyInstance(
+                    eventPublisherClass.getClassLoader(),
+                    new Class<?>[]{eventPublisherClass},
+                    (proxy, method, args) -> null
+            );
+            Constructor<?> svcCtor = serviceClass.getDeclaredConstructor(repoClass, eventPublisherClass);
+            svcCtor.setAccessible(true);
+            Object service = svcCtor.newInstance(repoProxy, eventProxy);
+
+            Object controller = createController(controllerClass, service);
+
+            // Find GET method with {id} – should be @GetMapping with value "/{id}"
+            Method getByIdMethod = null;
+            for (Method m : controllerClass.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(getAnnotationClass("org.springframework.web.bind.annotation.GetMapping"))) {
+                    Annotation ann = m.getAnnotation(getAnnotationClass("org.springframework.web.bind.annotation.GetMapping"));
+                    String[] paths = (String[]) ann.getClass().getMethod("value").invoke(ann);
+                    if (paths.length > 0 && paths[0].equals("/{id}")) {
+                        getByIdMethod = m;
+                        break;
+                    }
+                }
+            }
+            Assert.assertNotNull(getByIdMethod, "No method found for GET /{id}");
+            getByIdMethod.setAccessible(true);
+
+            Object result = getByIdMethod.invoke(controller, 1L);
+            Assert.assertNotNull(result);
+            if (result instanceof ResponseEntity) {
+                ResponseEntity<?> re = (ResponseEntity<?>) result;
+                Assert.assertEquals(re.getStatusCode(), HttpStatus.OK);
+                Object body = re.getBody();
+                Assert.assertNotNull(body);
+                Method getId = body.getClass().getMethod("getId");
+                Assert.assertEquals(getId.invoke(body), 1L);
+            } else {
+                Assert.fail("Expected ResponseEntity");
+            }
+        } catch (ClassNotFoundException e) {
+            Assert.fail("Required class not found: " + e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("GET by ID test failed: " + e.getMessage());
+        }
+    }
+   @Test
+    public void t31_serviceDeleteDelegationVerified() {
+        // SRS_REF: GraphOrchestratorService.calculateComplexity(Long graphId) - "Updates the graph's complexityScore,
+        // saves it, and publishes a post-commit transaction GraphComplexityEvent."
+        try {
+            Class<?> serviceClass = Class.forName("com.example.demo.service.GraphOrchestratorService");
+            Method calcMethod = serviceClass.getMethod("calculateComplexity", Long.class);
+            Class<?> entityClass = Class.forName("com.example.demo.entity.KnowledgeGraph");
+            Assert.assertEquals(calcMethod.getReturnType(), entityClass);
+
+            Class<?> eventPublisherClass = Class.forName("org.springframework.context.ApplicationEventPublisher");
+            boolean hasEventPublisherField = Arrays.stream(serviceClass.getDeclaredFields())
+                    .anyMatch(f -> f.getType().equals(eventPublisherClass));
+            Assert.assertTrue(hasEventPublisherField, "GraphOrchestratorService does not have an ApplicationEventPublisher field");
+        } catch (ClassNotFoundException e) {
+            Assert.fail("Required class not found: " + e.getMessage());
+        } catch (Exception e) {
+            Assert.fail("Service delegation validation failed: " + e.getMessage());
+        }
+    }

@@ -65,7 +65,7 @@ public class GraphController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody KnowledgeGraph graph) {
+    public ResponseEntity<KnowledgeGraph> addGraph(@Valid @RequestBody KnowledgeGraph graph) {
         KnowledgeGraph created = graphOrchestratorService.createGraph(graph);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
@@ -80,14 +80,14 @@ public class GraphController {
     public ResponseEntity<String> delete(@PathVariable Long id) {
         KnowledgeGraph graph = graphOrchestratorService.getById(id);
         graphOrchestratorService.deleteGraph(graph);
-        return ResponseEntity.ok("KnowledgeGraph deleted successfully");
+        return ResponseEntity.ok("KnowledgeGraph deleted successfully.");
     }
 
     @PostMapping("/{id}/calculate-complexity")
     @PreAuthorize("hasRole('DOMAIN_ROLE')")
-    public ResponseEntity<Double> calculateComplexity(@PathVariable Long id) {
-        Double score = graphOrchestratorService.calculateComplexity(id);
-        return ResponseEntity.ok(score);
+    public ResponseEntity<KnowledgeGraph> calculateComplexity(@PathVariable Long id) {
+        KnowledgeGraph graph = graphOrchestratorService.calculateComplexity(id);
+        return ResponseEntity.ok(graph);
     }
 
     @GetMapping("/activity")

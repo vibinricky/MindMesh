@@ -49,20 +49,20 @@ public class GraphOrchestratorService {
     }
 
     @Transactional
-    public Double calculateComplexity(Long graphId) {
-        KnowledgeGraph graph = graphService.getGraphById(graphId);
+    public KnowledgeGraph calculateComplexity(Long graphId) {
+        KnowledgeGraph graph = knowledgeGraphRepository.findById(graphId).orElseThrow(() -> new RuntimeException("Not found"));
         int nodeCount = graph.getNodes().size();
         int edgeCount = graph.getEdges().size();
         
         // Simple mock complexity calculation for demo
         double score = (nodeCount * 0.4) + (edgeCount * 0.6);
         graph.setComplexityScore(score);
-        knowledgeGraphRepository.save(graph);
+        KnowledgeGraph saved = knowledgeGraphRepository.save(graph);
         
-        SystemAccount user = graphService.getCurrentUser();
-        eventPublisher.publishEvent(new ComplexityCalculatedEvent(this, graphId, user.getId()));
+        SystemAccount user = graph.getOwner();
+        eventPublisher.publishEvent(new ComplexityCalculatedEvent(this, graphId, user != null ? user.getId() : null));
         
-        return score;
+        return saved;
     }
 
     public GraphOrchestratorService() {}
@@ -79,12 +79,12 @@ public class GraphOrchestratorService {
     }
 
     public void deleteGraph(KnowledgeGraph graph) {
-        knowledgeGraphRepository.delete(graph);
+        knowledgeGraphRepository.deleteById(graph.getId());
         eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(), graph.getOwner() != null ? graph.getOwner().getId() : null));
     }
 
     public KnowledgeGraph getById(Long id) {
-        return graphService.getGraphById(id);
+        return knowledgeGraphRepository.findById(id).orElseThrow(() -> new RuntimeException("Not found"));
     }
 
     public List<KnowledgeGraph> getAll() {
