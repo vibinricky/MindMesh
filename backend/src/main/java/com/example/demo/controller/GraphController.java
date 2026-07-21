@@ -35,7 +35,7 @@ public class GraphController {
 
     @GetMapping
     public ResponseEntity<List<KnowledgeGraph>> getAll() {
-        return ResponseEntity.ok(graphService.getAll());
+        return ResponseEntity.ok(graphOrchestratorService.getAll());
     }
 
     @GetMapping("/my")
@@ -46,10 +46,8 @@ public class GraphController {
     }
 
     @GetMapping("/public")
-    public ResponseEntity<Page<KnowledgeGraph>> getPublicGraphs(@RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(graphService.getPublicGraphs(pageable));
+    public ResponseEntity<List<KnowledgeGraph>> getPublicGraphs() {
+        return ResponseEntity.ok(graphOrchestratorService.getPublicGraphs());
     }
 
     @GetMapping("/search")
@@ -62,13 +60,13 @@ public class GraphController {
 
     @GetMapping("/{id}")
     public ResponseEntity<KnowledgeGraph> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(graphService.getGraphById(id));
+        return ResponseEntity.ok(graphOrchestratorService.getById(id));
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody KnowledgeGraph graph) {
-        KnowledgeGraph created = graphOrchestratorService.save(graph);
+        KnowledgeGraph created = graphOrchestratorService.createGraph(graph);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
@@ -80,7 +78,8 @@ public class GraphController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        graphOrchestratorService.deleteGraphWithEvents(id);
+        KnowledgeGraph graph = graphOrchestratorService.getById(id);
+        graphOrchestratorService.deleteGraph(graph);
         return ResponseEntity.ok("KnowledgeGraph deleted successfully");
     }
 

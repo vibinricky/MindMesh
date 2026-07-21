@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.GraphDto;
 import com.example.demo.entity.KnowledgeGraph;
+import java.util.List;
 import com.example.demo.entity.SystemAccount;
 import com.example.demo.event.ComplexityCalculatedEvent;
 import com.example.demo.event.GraphCreatedEvent;
@@ -71,14 +72,26 @@ public class GraphOrchestratorService {
         this.eventPublisher = eventPublisher;
     }
 
-    public KnowledgeGraph save(KnowledgeGraph graph) {
+    public KnowledgeGraph createGraph(KnowledgeGraph graph) {
         KnowledgeGraph saved = knowledgeGraphRepository.save(graph);
         eventPublisher.publishEvent(new GraphCreatedEvent(this, saved.getId(), saved.getOwner() != null ? saved.getOwner().getId() : null));
         return saved;
     }
 
-    public void delete(KnowledgeGraph graph) {
+    public void deleteGraph(KnowledgeGraph graph) {
         knowledgeGraphRepository.delete(graph);
         eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(), graph.getOwner() != null ? graph.getOwner().getId() : null));
+    }
+
+    public KnowledgeGraph getById(Long id) {
+        return graphService.getGraphById(id);
+    }
+
+    public List<KnowledgeGraph> getAll() {
+        return graphService.getAll();
+    }
+
+    public List<KnowledgeGraph> getPublicGraphs() {
+        return knowledgeGraphRepository.findByIsPublicTrue();
     }
 }
