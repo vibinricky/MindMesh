@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class GraphOrchestratorService {
@@ -27,7 +28,7 @@ public class GraphOrchestratorService {
     private ApplicationEventPublisher eventPublisher;
 
     @Transactional
-    public KnowledgeGraph createGraphWithEvents(GraphDto graphDto) {
+    public KnowledgeGraph createGraphWithEvents(@RequestBody GraphDto graphDto) {
         KnowledgeGraph graph = graphService.createGraph(graphDto);
         eventPublisher.publishEvent(new GraphCreatedEvent(this, graph.getId(), graph.getOwner().getId()));
         return graph;
