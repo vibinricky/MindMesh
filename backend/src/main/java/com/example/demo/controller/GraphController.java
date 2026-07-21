@@ -64,7 +64,7 @@ public class GraphController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
+    // @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody KnowledgeGraph graph) {
         KnowledgeGraph created = graphOrchestratorService.createGraph(graph);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
