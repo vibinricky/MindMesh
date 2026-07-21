@@ -63,4 +63,22 @@ public class GraphOrchestratorService {
         
         return score;
     }
+
+    public GraphOrchestratorService() {}
+
+    public GraphOrchestratorService(KnowledgeGraphRepository knowledgeGraphRepository, ApplicationEventPublisher eventPublisher) {
+        this.knowledgeGraphRepository = knowledgeGraphRepository;
+        this.eventPublisher = eventPublisher;
+    }
+
+    public KnowledgeGraph save(KnowledgeGraph graph) {
+        KnowledgeGraph saved = knowledgeGraphRepository.save(graph);
+        eventPublisher.publishEvent(new GraphCreatedEvent(this, saved.getId(), saved.getOwner() != null ? saved.getOwner().getId() : null));
+        return saved;
+    }
+
+    public void delete(KnowledgeGraph graph) {
+        knowledgeGraphRepository.delete(graph);
+        eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(), graph.getOwner() != null ? graph.getOwner().getId() : null));
+    }
 }
