@@ -65,23 +65,56 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login", "/api/auth/register", "/api/graphs/public", "/api/auth/ping").permitAll()
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/graphs").hasAuthority("ROLE_RESEARCH_STRATEGIST")
-                .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/graphs/**").hasAuthority("ROLE_RESEARCH_STRATEGIST")
-                .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/graphs/**").hasAuthority("ROLE_RESEARCH_STRATEGIST")
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/graphs/*/calculate-complexity").hasAuthority("ROLE_RESEARCH_STRATEGIST")
-                .requestMatchers("/api/graphs/activity/all").hasAuthority("ROLE_RESEARCH_STRATEGIST")
-                .anyRequest().authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
-    }
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+        .cors(cors -> {})
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+
+            // Public APIs
+            .requestMatchers(
+                    "/api/auth/login",
+                    "/api/auth/register",
+                    "/api/auth/ping",
+                    "/api/graphs/public"
+            ).permitAll()
+
+            // Swagger / OpenAPI
+            .requestMatchers(
+                    "/swagger-ui.html",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/v3/api-docs",
+                    "/swagger-resources/**",
+                    "/webjars/**"
+            ).permitAll()
+
+            // Role-based authorization
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/graphs")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+
+            .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/graphs/**")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+
+            .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/graphs/**")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/graphs/*/calculate-complexity")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+
+            .requestMatchers("/api/graphs/activity/all")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+
+            // Everything else requires authentication
+            .anyRequest().authenticated()
+        )
+        .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
