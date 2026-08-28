@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.AuthRequestDto;
 import com.example.demo.dto.AuthResponseDto;
+import com.example.demo.dto.RegisterRequestDto;
 import com.example.demo.entity.SystemAccount;
 import com.example.demo.repository.SystemAccountRepository;
 import com.example.demo.security.JwtUtil;
@@ -44,9 +45,20 @@ public class AuthService {
         return new AuthResponseDto(jwt, account.getUsername(), account.getRole());
     }
 
-    public void register(SystemAccount account) {
-        account.setPasswordHash(passwordEncoder.encode(account.getPasswordHash()));
+    public AuthResponseDto register(RegisterRequestDto request) {
+        if (systemAccountRepository.findByUsername(request.username()).isPresent()) throw new IllegalArgumentException("Username is already in use");
+        SystemAccount account = new SystemAccount();
+        account.setUsername(request.username().trim());
+        account.setRole(request.role());
+        account.setPasswordHash(passwordEncoder.encode(request.password()));
         account.setStatus("ACTIVE");
-        systemAccountRepository.save(account);
+        SystemAccount saved = systemAccountRepository.save(account);
+        UserDetails details = userDetailsService.loadUserByUsername(saved.getUsername());
+        return new AuthResponseDto(jwtUtil.generateToken(details), saved.getUsername(), saved.getRole());
+    }
+
+    public SystemAccount getProfile(String username) {
+        return systemAccountRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

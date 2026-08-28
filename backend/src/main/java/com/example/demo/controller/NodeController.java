@@ -1,39 +1,35 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.ConceptNode;
-import com.example.demo.entity.KnowledgeGraph;
-import com.example.demo.repository.ConceptNodeRepository;
-import com.example.demo.service.GraphService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.dto.ConceptNodeDto;
+import com.example.demo.dto.NodeRequestDto;
+import com.example.demo.service.CanvasService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-
 @RestController
 @RequestMapping("/api/nodes")
 public class NodeController {
-
-    @Autowired
-    private ConceptNodeRepository conceptNodeRepository;
-    
-    @Autowired
-    private GraphService graphService;
-
-    @PostMapping("/validate-layout/{graphId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ConceptNode> validateLayoutAndAddNode(@PathVariable Long graphId, @RequestBody ConceptNode node) {
-        KnowledgeGraph graph = graphService.getGraphById(graphId);
-        node.setKnowledgeGraph(graph);
-        // simple validation or offset could be done in SpatialLogicService, skipping for brevity
-        ConceptNode savedNode = conceptNodeRepository.save(node);
-        return ResponseEntity.ok(savedNode);
-    }
+    private final CanvasService canvas;
+    public NodeController(CanvasService canvas) { this.canvas = canvas; }
 
     @GetMapping("/graph/{graphId}")
-    public ResponseEntity<List<ConceptNode>> getNodesForGraph(@PathVariable Long graphId) {
-        return ResponseEntity.ok(conceptNodeRepository.findByKnowledgeGraphId(graphId));
-    }
+    public List<ConceptNodeDto> getNodesForGraph(@PathVariable Long graphId) { return canvas.nodes(graphId); }
+
+    @PostMapping("/graph/{graphId}")
+    public ResponseEntity<ConceptNodeDto> createNode(@PathVariable Long graphId, @Valid @RequestBody NodeRequestDto request) { return ResponseEntity.status(HttpStatus.CREATED).body(canvas.createNode(graphId, request)); }
+
+    @PutMapping("/{nodeId}")
+    public ConceptNodeDto updateNode(@PathVariable Long nodeId, @Valid @RequestBody NodeRequestDto request) { return canvas.updateNode(nodeId, request); }
+
+    @DeleteMapping("/{nodeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteNode(@PathVariable Long nodeId) { canvas.deleteNode(nodeId); }
+
+    /** Kept as a compatibility alias for the original canvas endpoint. */
+    @PostMapping("/validate-layout/{graphId}")
+    public ResponseEntity<ConceptNodeDto> validateLayoutAndAddNode(@PathVariable Long graphId, @Valid @RequestBody NodeRequestDto request) { return ResponseEntity.status(HttpStatus.CREATED).body(canvas.createNode(graphId, request)); }
 }

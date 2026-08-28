@@ -102,6 +102,13 @@ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Excepti
             .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/graphs/*/calculate-complexity")
                 .hasAuthority("ROLE_RESEARCH_STRATEGIST")
 
+            .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/nodes/**", "/api/edges/**", "/api/collab/invite")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+            .requestMatchers(org.springframework.http.HttpMethod.PUT, "/api/nodes/**", "/api/edges/**")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+            .requestMatchers(org.springframework.http.HttpMethod.DELETE, "/api/nodes/**", "/api/edges/**")
+                .hasAuthority("ROLE_RESEARCH_STRATEGIST")
+
             .requestMatchers("/api/graphs/activity/all")
                 .hasAuthority("ROLE_RESEARCH_STRATEGIST")
 

@@ -54,6 +54,7 @@ public class GraphService {
 
     public KnowledgeGraph updateGraph(Long id, GraphDto graphDto) {
         KnowledgeGraph graph = getGraphById(id);
+        assertOwner(graph);
         graph.setTitle(graphDto.getTitle());
         graph.setDescription(graphDto.getDescription());
         graph.setDomain(graphDto.getDomain());
@@ -63,6 +64,7 @@ public class GraphService {
 
     public void deleteGraph(Long id) {
         KnowledgeGraph graph = getGraphById(id);
+        assertOwner(graph);
         knowledgeGraphRepository.delete(graph);
     }
 
@@ -88,5 +90,11 @@ public class GraphService {
             username = principal.toString();
         }
         return systemAccountRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    private void assertOwner(KnowledgeGraph graph) {
+        if (graph.getOwner() == null || !graph.getOwner().getId().equals(getCurrentUser().getId())) {
+            throw new org.springframework.security.access.AccessDeniedException("Only the graph owner can modify this mesh");
+        }
     }
 }

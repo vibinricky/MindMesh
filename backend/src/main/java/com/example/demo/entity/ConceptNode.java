@@ -13,6 +13,9 @@ public class ConceptNode {
     @Column(nullable = false)
     private String label;
 
+    @Column(name = "node_type", length = 100)
+    private String type;
+
     private Double xPosition;
 
     private Double yPosition;
@@ -38,6 +41,10 @@ public class ConceptNode {
     public void setLabel(String label) {
         this.label = label;
     }
+
+    public String getType() { return type; }
+
+    public void setType(String type) { this.type = type; }
 
     public Double getXPosition() {
         return xPosition;

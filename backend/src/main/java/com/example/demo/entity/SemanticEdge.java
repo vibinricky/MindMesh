@@ -19,6 +19,8 @@ public class SemanticEdge {
     @Column(nullable = false)
     private String relationshipType;
 
+    private Double weight = 1.0;
+
     @ManyToOne
     @JoinColumn(name = "knowledge_graph_id")
     private KnowledgeGraph knowledgeGraph;
@@ -56,6 +58,10 @@ public class SemanticEdge {
     public void setRelationshipType(String relationshipType) {
         this.relationshipType = relationshipType;
     }
+
+    public Double getWeight() { return weight; }
+
+    public void setWeight(Double weight) { this.weight = weight; }
 
     public KnowledgeGraph getKnowledgeGraph() {
         return knowledgeGraph;

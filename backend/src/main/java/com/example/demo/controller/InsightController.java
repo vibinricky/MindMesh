@@ -1,24 +1,21 @@
 package com.example.demo.controller;
 
 import org.springframework.http.ResponseEntity;
+import com.example.demo.dto.PlatformStatsDto;
+import com.example.demo.service.InsightService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/insights")
 public class InsightController {
+    private final InsightService insightService;
+    public InsightController(InsightService insightService) { this.insightService = insightService; }
 
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getStats() {
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("totalNodes", 100);
-        stats.put("averageComplexity", 45.5);
-        stats.put("networkDensity", 0.75);
-        stats.put("publicReach", 1200);
-        return ResponseEntity.ok(stats);
+    public ResponseEntity<PlatformStatsDto> getStats() {
+        return ResponseEntity.ok(insightService.stats());
     }
 }

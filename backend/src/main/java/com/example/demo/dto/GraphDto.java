@@ -1,9 +1,11 @@
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
 
 public class GraphDto {
     private Long id;
+    @NotBlank
     private String title;
     private String description;
     private String domain;
