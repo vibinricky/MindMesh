@@ -8,18 +8,20 @@ const Dashboard = () => {
   
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="dashboard-header">
         <h2>Platform Overview</h2>
         {user?.role === 'ROLE_RESEARCH_STRATEGIST' && (
-          <button style={{ padding: '8px 16px', background: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}>
+          <button className="btn danger">
             Admin Actions
           </button>
         )}
       </div>
       <StatCards />
-      <div style={{ marginTop: '30px' }}>
+      <div className="mt-8">
         <h3>Recent Activity</h3>
-        <RecentActivity />
+        <div className="card mt-4">
+          <RecentActivity />
+        </div>
       </div>
     </div>
   );

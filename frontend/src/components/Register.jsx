@@ -26,12 +26,12 @@ const Register = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', border: '1px solid #ccc' }}>
-      <h2>Join MindMesh</h2>
+    <div className="card" style={{ maxWidth: '400px', margin: '4rem auto' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Join MindMesh</h2>
       <ErrorHandler error={error ? { message: error } : null} />
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="username">Username</label>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div>
+          <label htmlFor="username" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Username</label>
           <input 
             id="username"
             type="text" 
@@ -39,11 +39,10 @@ const Register = () => {
             onChange={(e) => setUsername(e.target.value)} 
             placeholder="MindMesh Username"
             required
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="password">Password</label>
+        <div>
+          <label htmlFor="password" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Password</label>
           <input 
             id="password"
             type="password" 
@@ -51,21 +50,20 @@ const Register = () => {
             onChange={(e) => setPassword(e.target.value)} 
             placeholder="Enter Password"
             required
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="role">Role</label>
-          <select id="role" value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '8px' }}>
+        <div>
+          <label htmlFor="role" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Role</label>
+          <select id="role" value={role} onChange={(e) => setRole(e.target.value)}>
             <option value="ROLE_ANALYST">Analyst (Read-only)</option>
             <option value="ROLE_RESEARCH_STRATEGIST">Research Strategist (Full Access)</option>
           </select>
         </div>
-        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px' }}>
+        <button type="submit" className="primary mt-4" disabled={isLoading} style={{ width: '100%', padding: '0.75rem' }}>
           {isLoading ? 'Registering...' : 'Register'}
         </button>
       </form>
-      <div style={{ marginTop: '15px', textAlign: 'center' }}>
+      <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
         <Link to="/login">Already have an account? Login</Link>
       </div>
     </div>

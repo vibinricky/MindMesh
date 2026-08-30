@@ -21,13 +21,13 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '100px auto', padding: '20px', border: '1px solid #ccc' }}>
-      <h2>Login to MindMesh</h2>
-      {location.state?.message && <p style={{ color: '#18794e' }}>{location.state.message}</p>}
+    <div className="card" style={{ maxWidth: '400px', margin: '4rem auto' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login to MindMesh</h2>
+      {location.state?.message && <p style={{ color: '#10b981', textAlign: 'center' }}>{location.state.message}</p>}
       <ErrorHandler error={error ? { message: error } : null} />
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="username">MindMesh Username</label>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <div>
+          <label htmlFor="username" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>MindMesh Username</label>
           <input 
             id="username"
             type="text" 
@@ -35,11 +35,10 @@ const Login = () => {
             onChange={(e) => setUsername(e.target.value)} 
             placeholder="MindMesh Username"
             required
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <div style={{ marginBottom: '15px' }}>
-          <label htmlFor="password">Password</label>
+        <div>
+          <label htmlFor="password" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Password</label>
           <input 
             id="password"
             type="password" 
@@ -47,14 +46,13 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)} 
             placeholder="Enter Password"
             required
-            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '10px' }}>
+        <button type="submit" className="primary mt-4" disabled={isLoading} style={{ width: '100%', padding: '0.75rem' }}>
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
       </form>
-      <div style={{ marginTop: '15px', textAlign: 'center' }}>
+      <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
         <Link to="/register">Register a new account</Link>
       </div>
     </div>

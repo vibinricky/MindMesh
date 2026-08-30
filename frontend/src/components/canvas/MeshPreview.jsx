@@ -3,24 +3,27 @@ import { Link } from 'react-router-dom';
 
 const MeshPreview = ({ graph, onEdit, onDelete, showActions }) => {
   return (
-    <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-      <h3>{graph.title}</h3>
-      <p style={{ color: '#666', fontSize: '14px' }}>{graph.description || 'No description provided'}</p>
-      <div style={{ display: 'flex', gap: '15px', fontSize: '12px', color: '#888', marginBottom: '15px' }}>
+    <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+      <h3 style={{ marginBottom: '0.5rem' }}>{graph.title}</h3>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', flex: 1, marginBottom: '1rem' }}>{graph.description || 'No description provided'}</p>
+      
+      <div className="flex-row gap-4 muted" style={{ marginBottom: '1.5rem', flexWrap: 'wrap' }}>
         <span>Domain: {graph.domain || 'N/A'}</span>
-        <span>Visibility: {graph.isPublic ? 'Public' : 'Private'}</span>
+        <span>•</span>
+        <span>{graph.isPublic ? 'Public' : 'Private'}</span>
+        <span>•</span>
         <span>Complexity: {graph.complexityScore}</span>
       </div>
       
-      <div style={{ display: 'flex', gap: '10px' }}>
-        <Link to={`/graphs/${graph.id}/canvas`} style={{ padding: '5px 10px', background: '#007bff', color: 'white', textDecoration: 'none', borderRadius: '4px' }}>
+      <div className="flex-row gap-2 mt-auto">
+        <Link to={`/graphs/${graph.id}/canvas`} className="btn primary" style={{ flex: 1 }}>
           Open Canvas
         </Link>
         {showActions && onEdit && (
-          <button onClick={() => onEdit(graph)} style={{ padding: '5px 10px', cursor: 'pointer' }}>Edit</button>
+          <button onClick={() => onEdit(graph)}>Edit</button>
         )}
         {showActions && onDelete && (
-          <button onClick={() => onDelete(graph.id)} style={{ padding: '5px 10px', background: '#dc3545', color: 'white', cursor: 'pointer', border: 'none' }}>Delete</button>
+          <button onClick={() => onDelete(graph.id)} className="danger">Delete</button>
         )}
       </div>
     </div>

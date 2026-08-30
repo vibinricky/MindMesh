@@ -14,17 +14,17 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={{ display: 'flex', justifyContent: 'space-between', padding: '15px 20px', backgroundColor: '#333', color: '#fff' }}>
-      <div style={{ fontWeight: 'bold', fontSize: '18px' }}>MindMesh</div>
-      <div style={{ display: 'flex', gap: '15px' }}>
-        <Link to="/dashboard" style={{ color: '#fff', textDecoration: 'none' }}>Dashboard</Link>
-        <Link to="/my-graphs" style={{ color: '#fff', textDecoration: 'none' }}>My Graphs</Link>
-        <Link to="/discovery" style={{ color: '#fff', textDecoration: 'none' }}>Public Graphs</Link>
-        <Link to="/search" style={{ color: '#fff', textDecoration: 'none' }}>Search</Link>
-        <Link to="/metrics" style={{ color: '#fff', textDecoration: 'none' }}>Metrics</Link>
-        <Link to="/profile" style={{ color: '#fff', textDecoration: 'none' }}>Profile</Link>
-        <Link to="/activity" style={{ color: '#fff', textDecoration: 'none' }}>{user?.role === 'ROLE_RESEARCH_STRATEGIST' ? 'All Activity Logs' : 'My Activity'}</Link>
-        <button onClick={handleLogout} style={{ background: 'transparent', color: '#fff', border: '1px solid #fff', cursor: 'pointer' }}>
+    <nav className="navbar">
+      <div className="navbar-brand">MindMesh</div>
+      <div className="navbar-links">
+        <Link to="/dashboard" className="nav-link">Dashboard</Link>
+        <Link to="/my-graphs" className="nav-link">My Graphs</Link>
+        <Link to="/discovery" className="nav-link">Public Graphs</Link>
+        <Link to="/search" className="nav-link">Search</Link>
+        <Link to="/metrics" className="nav-link">Metrics</Link>
+        <Link to="/profile" className="nav-link">Profile</Link>
+        <Link to="/activity" className="nav-link">{user?.role === 'ROLE_RESEARCH_STRATEGIST' ? 'All Activity Logs' : 'My Activity'}</Link>
+        <button onClick={handleLogout} className="btn-logout">
           Logout
         </button>
       </div>

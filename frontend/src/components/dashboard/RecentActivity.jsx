@@ -9,15 +9,15 @@ const RecentActivity = () => {
   }, []);
 
   return (
-    <ul style={{ listStyle: 'none', padding: 0 }}>
-      {activity.length === 0 && <p>No recent activity found.</p>}
+    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+      {activity.length === 0 && <p className="muted">No recent activity found.</p>}
       {activity.map(log => (
-        <li key={log.id} style={{ padding: '10px 0', borderBottom: '1px solid #eee' }}>
-          <span style={{ fontSize: '12px', color: '#888', display: 'inline-block', width: '150px' }}>
+        <li key={log.id} style={{ padding: '0.75rem 0', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <span className="muted" style={{ minWidth: '150px' }}>
             {new Date(log.timestamp).toLocaleString()}
           </span>
-          <strong style={{ margin: '0 10px' }}>{log.action}</strong>
-          <span>{log.details} <span className="muted">(Graph #{log.graphId ?? '—'})</span></span>
+          <strong>{log.action}</strong>
+          <span style={{ color: 'var(--text-secondary)' }}>{log.details} <span className="muted">(Graph #{log.graphId ?? '—'})</span></span>
         </li>
       ))}
     </ul>

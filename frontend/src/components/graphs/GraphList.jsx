@@ -46,10 +46,10 @@ const GraphList = ({ type }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div className="dashboard-header">
         <h2>My Knowledge Meshes</h2>
         {isStrategist && (
-          <button onClick={() => setShowForm(true)} style={{ padding: '8px 16px', background: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+          <button onClick={() => setShowForm(true)} className="btn primary">
             + Create New Mesh
           </button>
         )}
@@ -57,21 +57,23 @@ const GraphList = ({ type }) => {
 
       <ErrorHandler error={error ? { message: error } : null} onRetry={() => dispatch(fetchMyGraphs({ page: currentPage, size: 10 }))} />
 
-      {loading && <p>Loading meshes...</p>}
+      {loading && <p className="muted">Loading meshes...</p>}
 
       {!loading && items.length === 0 && !error && (
-        <EmptyState 
-          message="You haven't built any interactive graphs yet" 
-          action={isStrategist && (
-            <button onClick={() => setShowForm(true)} style={{ padding: '8px 16px', cursor: 'pointer' }}>
-              Create your first mesh
-            </button>
-          )} 
-        />
+        <div className="card mt-4" style={{ textAlign: 'center', padding: '3rem' }}>
+          <EmptyState 
+            message="You haven't built any interactive graphs yet" 
+            action={isStrategist && (
+              <button onClick={() => setShowForm(true)} className="btn primary mt-4">
+                Create your first mesh
+              </button>
+            )} 
+          />
+        </div>
       )}
 
       {!loading && items.length > 0 && (
-        <div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
           {items.map(graph => (
             <MeshPreview 
               key={graph.id} 
@@ -83,9 +85,9 @@ const GraphList = ({ type }) => {
           ))}
           
           {totalPages > 1 && (
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px', justifyContent: 'center' }}>
+            <div className="flex-row justify-between mt-8" style={{ gridColumn: '1 / -1' }}>
               <button disabled={currentPage === 0} onClick={() => handlePageChange(currentPage - 1)}>Previous</button>
-              <span>Page {currentPage + 1} of {totalPages}</span>
+              <span className="muted">Page {currentPage + 1} of {totalPages}</span>
               <button disabled={currentPage === totalPages - 1} onClick={() => handlePageChange(currentPage + 1)}>Next</button>
             </div>
           )}

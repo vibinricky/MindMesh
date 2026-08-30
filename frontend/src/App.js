@@ -18,12 +18,15 @@ import ActivityLog from './components/processes/ActivityLog';
 const Profile = () => {
   const { user } = useSelector(state => state.auth);
   return (
-    <div style={{ maxWidth: 560 }}>
-      <h2>User Profile</h2>
-      <dl>
-        <dt>Username</dt><dd>{user?.username}</dd>
-        <dt>Role</dt><dd>{user?.role?.replace('ROLE_', '').replaceAll('_', ' ')}</dd>
-        <dt>Status</dt><dd>{user?.status || 'ACTIVE'}</dd>
+    <div className="card" style={{ maxWidth: 560, margin: '2rem auto' }}>
+      <h2 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>User Profile</h2>
+      <dl style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '1rem', margin: 0 }}>
+        <dt className="muted" style={{ fontWeight: 600 }}>Username</dt>
+        <dd style={{ margin: 0, fontWeight: 500 }}>{user?.username}</dd>
+        <dt className="muted" style={{ fontWeight: 600 }}>Role</dt>
+        <dd style={{ margin: 0 }}>{user?.role?.replace('ROLE_', '').replaceAll('_', ' ')}</dd>
+        <dt className="muted" style={{ fontWeight: 600 }}>Status</dt>
+        <dd style={{ margin: 0 }}>{user?.status || 'ACTIVE'}</dd>
       </dl>
     </div>
   );
@@ -36,7 +39,7 @@ const PrivateRoute = ({ children }) => {
   return (
     <>
       <Navbar />
-      <div className="container" style={{ padding: '20px' }}>
+      <div className="container">
         {children}
       </div>
     </>
