@@ -19,3 +19,8 @@ export const ping = async () => {
   const response = await api.get('/auth/ping');
   return response.data;
 };
+
+export const logout = () => {
+  localStorage.removeItem('token');
+};
+export const getCurrentUser = getProfile;

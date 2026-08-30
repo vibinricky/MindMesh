@@ -57,9 +57,9 @@ const graphSlice = createSlice({
       })
       .addCase(fetchMyGraphs.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload.content;
-        state.totalPages = action.payload.totalPages;
-        state.currentPage = action.payload.number;
+        state.items = action.payload.content || (Array.isArray(action.payload) ? action.payload : []);
+        state.totalPages = action.payload.totalPages || 1;
+        state.currentPage = action.payload.number || 0;
       })
       .addCase(fetchMyGraphs.rejected, (state, action) => {
         state.loading = false;

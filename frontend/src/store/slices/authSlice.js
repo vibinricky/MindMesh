@@ -5,7 +5,12 @@ export const login = createAsyncThunk('auth/login', async (credentials, { reject
   try {
     const data = await authService.login(credentials);
     localStorage.setItem('token', data.token);
-    const profile = await authService.getProfile();
+    let profile = { username: data.username, role: data.role };
+    try {
+      profile = await authService.getProfile();
+    } catch (e) {
+      console.warn('Failed to fetch profile during login, using login response data', e);
+    }
     return { token: data.token, user: profile };
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Login failed');

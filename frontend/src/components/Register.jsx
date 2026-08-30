@@ -31,8 +31,9 @@ const Register = () => {
       <ErrorHandler error={error ? { message: error } : null} />
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label>Username</label>
+          <label htmlFor="username">Username</label>
           <input 
+            id="username"
             type="text" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
@@ -42,8 +43,9 @@ const Register = () => {
           />
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
           <input 
+            id="password"
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
@@ -53,8 +55,8 @@ const Register = () => {
           />
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label>Role</label>
-          <select value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '8px' }}>
+          <label htmlFor="role">Role</label>
+          <select id="role" value={role} onChange={(e) => setRole(e.target.value)} style={{ width: '100%', padding: '8px' }}>
             <option value="ROLE_ANALYST">Analyst (Read-only)</option>
             <option value="ROLE_RESEARCH_STRATEGIST">Research Strategist (Full Access)</option>
           </select>

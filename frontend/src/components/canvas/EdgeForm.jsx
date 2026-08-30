@@ -31,8 +31,9 @@ const EdgeForm = ({ sourceNode, targetNode, onSubmit, onClose }) => {
         </p>
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Relationship Type</label>
+            <label htmlFor="relationshipType" style={{ display: 'block', marginBottom: '5px' }}>Relationship Type</label>
             <input 
+              id="relationshipType"
               type="text" 
               value={relationshipType} 
               onChange={(e) => setRelationshipType(e.target.value)} 
@@ -42,8 +43,8 @@ const EdgeForm = ({ sourceNode, targetNode, onSubmit, onClose }) => {
             />
           </div>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Weight</label>
-            <input type="number" min="0.1" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
+            <label htmlFor="weight" style={{ display: 'block', marginBottom: '5px' }}>Weight</label>
+            <input id="weight" type="number" min="0.1" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }} />
           </div>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
             <button type="button" onClick={onClose} style={{ padding: '5px 10px' }}>Cancel</button>

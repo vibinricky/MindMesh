@@ -27,8 +27,9 @@ const Login = () => {
       <ErrorHandler error={error ? { message: error } : null} />
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label>MindMesh Username</label>
+          <label htmlFor="username">MindMesh Username</label>
           <input 
+            id="username"
             type="text" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
@@ -38,8 +39,9 @@ const Login = () => {
           />
         </div>
         <div style={{ marginBottom: '15px' }}>
-          <label>Password</label>
+          <label htmlFor="password">Password</label>
           <input 
+            id="password"
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 

@@ -36,8 +36,9 @@ const NodeForm = ({ node, onSubmit, onClose }) => {
         <h3>{node ? 'Edit Node' : 'Add Node'}</h3>
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Label</label>
+            <label htmlFor="nodeLabel" style={{ display: 'block', marginBottom: '5px' }}>Label</label>
             <input 
+              id="nodeLabel"
               ref={inputRef}
               type="text" 
               value={label} 
@@ -47,8 +48,8 @@ const NodeForm = ({ node, onSubmit, onClose }) => {
             />
           </div>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Node Type</label>
-            <select value={type} onChange={(e) => setType(e.target.value)} style={{ width: '100%', padding: '8px' }}>
+            <label htmlFor="nodeType" style={{ display: 'block', marginBottom: '5px' }}>Node Type</label>
+            <select id="nodeType" value={type} onChange={(e) => setType(e.target.value)} style={{ width: '100%', padding: '8px' }}>
               <option>Concept</option><option>Question</option><option>Evidence</option><option>Outcome</option>
             </select>
           </div>

@@ -74,8 +74,9 @@ const GraphForm = ({ graph, onClose }) => {
         
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Mesh Title</label>
+            <label htmlFor="title" style={{ display: 'block', marginBottom: '5px' }}>Mesh Title</label>
             <input 
+              id="title"
               ref={titleRef}
               type="text" 
               value={title} 
@@ -86,8 +87,9 @@ const GraphForm = ({ graph, onClose }) => {
           </div>
           
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Description</label>
+            <label htmlFor="description" style={{ display: 'block', marginBottom: '5px' }}>Description</label>
             <textarea 
+              id="description"
               value={description} 
               onChange={(e) => setDescription(e.target.value)} 
               style={{ width: '100%', padding: '8px', boxSizing: 'border-box', minHeight: '80px' }}
@@ -95,8 +97,9 @@ const GraphForm = ({ graph, onClose }) => {
           </div>
           
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'block', marginBottom: '5px' }}>Domain</label>
+            <label htmlFor="domain" style={{ display: 'block', marginBottom: '5px' }}>Domain</label>
             <input 
+              id="domain"
               type="text" 
               value={domain} 
               onChange={(e) => setDomain(e.target.value)} 
@@ -105,13 +108,14 @@ const GraphForm = ({ graph, onClose }) => {
           </div>
           
           <div style={{ marginBottom: '15px' }}>
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <label htmlFor="isPublic" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input 
+                id="isPublic"
                 type="checkbox" 
                 checked={isPublic} 
                 onChange={(e) => setIsPublic(e.target.checked)} 
               />
-              Make this mesh public
+              Visibility toggle (Make this mesh public)
             </label>
           </div>
           
