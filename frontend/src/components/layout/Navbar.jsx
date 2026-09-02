@@ -14,17 +14,31 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar">
-      <div className="navbar-brand">MindMesh</div>
-      <div className="navbar-links">
-        <Link to="/dashboard" className="nav-link">Dashboard</Link>
-        <Link to="/my-graphs" className="nav-link">My Graphs</Link>
-        <Link to="/discovery" className="nav-link">Public Graphs</Link>
-        <Link to="/search" className="nav-link">Search</Link>
-        <Link to="/metrics" className="nav-link">Metrics</Link>
-        <Link to="/profile" className="nav-link">Profile</Link>
-        <Link to="/activity" className="nav-link">{user?.role === 'ROLE_RESEARCH_STRATEGIST' ? 'All Activity Logs' : 'My Activity'}</Link>
-        <button onClick={handleLogout} className="btn-logout">
+    <nav className="navbar" style={{ backgroundColor: '#111827', color: 'white', display: 'flex', justifyContent: 'space-between', padding: '1rem 2rem', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        <div style={{ color: '#3b82f6', fontSize: '1.25rem', fontWeight: 'bold' }}>MindMesh</div>
+        <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <Link to="/dashboard" style={{ color: '#f3f4f6', textDecoration: 'none', fontSize: '0.9rem' }}>Dashboard</Link>
+          {user?.role === 'ROLE_RESEARCH_STRATEGIST' ? (
+            <>
+              <Link to="/my-graphs" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem' }}>Workspace</Link>
+              <Link to="/search" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem' }}>Semantic Search</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/activity" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem' }}>System Health</Link>
+              <Link to="/metrics" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem' }}>Global Metrics</Link>
+            </>
+          )}
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.85rem' }}>
+        <span style={{ border: '1px solid #1e3a8a', padding: '0.25rem 0.75rem', borderRadius: '9999px', color: '#60a5fa', fontWeight: '600', letterSpacing: '0.05em' }}>
+          {user?.role ? user.role.replace('ROLE_', '').replace('_', ' ') : 'KNOWLEDGE ARCHITECT'}
+        </span>
+        <span style={{ color: '#6b7280' }}>|</span>
+        <span style={{ color: '#d1d5db' }}>{user?.username || 'admin'}</span>
+        <button onClick={handleLogout} style={{ backgroundColor: '#dc2626', color: 'white', border: 'none', padding: '0.25rem 0.75rem', borderRadius: '0.25rem', cursor: 'pointer', marginLeft: '0.5rem' }}>
           Logout
         </button>
       </div>

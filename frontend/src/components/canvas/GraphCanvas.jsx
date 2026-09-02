@@ -113,7 +113,39 @@ const GraphCanvas = () => {
     {nodeForm && <NodeForm node={nodeForm.id ? nodeForm : null} onSubmit={saveNode} onClose={() => setNodeForm(null)} />}
     {selected && nodeForm && canEdit && <button onClick={removeNode} style={{ marginTop: 12, color: '#b91c1c' }}>Delete selected node</button>}
     {edgeSource && !edgeSource.selecting && edgeTarget && <EdgeForm sourceNode={edgeSource} targetNode={edgeTarget} onSubmit={saveEdge} onClose={() => { setEdgeSource(null); setEdgeTarget(null); }} />}
-    {showInsights && <div style={{ position: 'fixed', inset: 0, zIndex: 10, background: '#0008', display: 'grid', placeItems: 'center' }}><div style={{ background: '#fff', padding: 24, borderRadius: 8, minWidth: 320 }}><h3>Mesh Insights</h3><CapacityBar score={graph.complexityScore || 0} /><p>Nodes: {nodes.length}</p><p>Edges: {edges.length}</p><p>Domain: {graph.domain || 'Unspecified'}</p><button onClick={() => setShowInsights(false)}>Close Insight</button></div></div>}
+    {showInsights && (
+      <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ background: '#fff', width: '500px', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 32px 16px 32px' }}>
+            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#111827' }}>Mesh Insights: {graph.title}</h3>
+            <button onClick={() => setShowInsights(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#6b7280' }}>&times;</button>
+          </div>
+          <div style={{ padding: '0 32px 32px 32px' }}>
+            <div style={{ marginBottom: '24px' }}>
+              <span style={{ fontSize: '12px', fontWeight: '600', color: '#60a5fa', letterSpacing: '0.05em', textTransform: 'uppercase' }}>DESCRIPTION</span>
+              <p style={{ margin: '4px 0 0 0', color: '#374151' }}>{graph.description || 'No description available'}</p>
+            </div>
+            <div style={{ display: 'flex', gap: '48px', marginBottom: '32px' }}>
+              <div style={{ borderLeft: '2px solid #111827', paddingLeft: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '4px' }}>Complexity Score</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>{graph.complexityScore ? graph.complexityScore.toFixed(1) : '0.0'}</div>
+              </div>
+              <div style={{ borderLeft: '2px solid #111827', paddingLeft: '16px' }}>
+                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '4px' }}>Node Count</div>
+                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>{nodes.length}</div>
+              </div>
+            </div>
+            <div style={{ marginBottom: '32px' }}>
+              <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Conceptual Framework</h4>
+              <p style={{ margin: 0, color: '#6b7280', fontSize: '14px' }}>This mesh is currently in a high-level state with no specific child nodes defined yet.</p>
+            </div>
+            <button onClick={() => setShowInsights(false)} style={{ width: '100%', padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer' }}>
+              Close Insight
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
   </div>;
 };
 export default GraphCanvas;
