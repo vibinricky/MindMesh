@@ -9,8 +9,10 @@ const ActivityLog = () => {
   const [error, setError] = useState(null);
   const { user } = useSelector((state) => state.auth);
 
+  const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST';
+
   useEffect(() => {
-    (user?.role === 'ROLE_RESEARCH_STRATEGIST' ? graphService.getAllActivity() : graphService.getActivity())
+    (isStrategist ? graphService.getAllActivity() : graphService.getActivity())
       .then(data => setActivity(data.content || []))
       .catch(err => setError(err.response?.data?.message || 'Failed to load logs'))
       .finally(() => setLoading(false));
@@ -21,7 +23,7 @@ const ActivityLog = () => {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '20px' }}>{user?.role === 'ROLE_RESEARCH_STRATEGIST' ? 'Platform Activity Logs' : 'My Activity Logs'}</h2>
+      <h2 style={{ marginBottom: '20px' }}>{isStrategist ? 'Platform Activity Logs' : 'My Activity Logs'}</h2>
       <div style={{ background: '#fff', border: '1px solid #ddd', borderRadius: '8px', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead style={{ background: '#f8f9fa' }}>

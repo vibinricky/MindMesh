@@ -19,7 +19,7 @@ const Navbar = () => {
         <div style={{ color: '#3b82f6', fontSize: '1.25rem', fontWeight: 'bold' }}>MindMesh</div>
         <div style={{ display: 'flex', gap: '1.5rem' }}>
           <Link to="/dashboard" style={{ color: '#f3f4f6', textDecoration: 'none', fontSize: '0.9rem' }}>Dashboard</Link>
-          {user?.role === 'ROLE_RESEARCH_STRATEGIST' ? (
+          {(user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST') ? (
             <>
               <Link to="/my-graphs" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem' }}>Workspace</Link>
               <Link to="/search" style={{ color: '#9ca3af', textDecoration: 'none', fontSize: '0.9rem' }}>Semantic Search</Link>

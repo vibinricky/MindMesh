@@ -26,7 +26,8 @@ const GraphCanvas = () => {
   const [inviteeUsername, setInviteeUsername] = useState('');
   const [message, setMessage] = useState('');
   const [dragging, setDragging] = useState(null);
-  const canEdit = user?.role === 'ROLE_RESEARCH_STRATEGIST' && graph?.ownerId === user?.id;
+  const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST';
+  const canEdit = isStrategist && graph?.ownerId === user?.id;
 
   const loadData = useCallback(async () => {
     try {

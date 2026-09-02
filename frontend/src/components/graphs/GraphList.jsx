@@ -42,7 +42,7 @@ const GraphList = ({ type }) => {
     setEditingGraph(null);
   };
 
-  const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST';
+  const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST';
 
   return (
     <div>
