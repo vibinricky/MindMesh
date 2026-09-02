@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import * as graphService from '../../services/graphService';
+import graphService from '../../services/graphService';
 
 export const fetchMyGraphs = createAsyncThunk('graphs/fetchMy', async ({ page = 0, size = 10 }, { rejectWithValue }) => {
   try {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import * as graphService from '../../services/graphService';
+import graphService from '../../services/graphService';
 import ErrorHandler from '../ErrorHandler';
 
 const GraphForm = ({ graph, onClose }) => {

@@ -89,3 +89,31 @@ export const getPlatformStats = async () => {
   const response = await api.get(`/insights/stats`);
   return response.data;
 };
+
+const graphService = {
+  getMyGraphs,
+  getPublicGraphs,
+  searchGraphs,
+  getGraphById,
+  getFullGraph,
+  createGraph,
+  updateGraph,
+  deleteGraph,
+  calculateComplexity,
+  getActivity,
+  getAllActivity,
+  getGraphNodes,
+  addNodes,
+  updateNode,
+  deleteNode,
+  getGraphEdges,
+  createEdge,
+  updateEdge,
+  deleteEdge,
+  inviteCollaborator,
+  getPendingInvites,
+  respondToInvite,
+  getPlatformStats,
+};
+
+export default graphService;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteGraph } from '../../store/slices/graphSlice';
-import * as graphService from '../../services/graphService';
+import graphService from '../../services/graphService';
 import EmptyState from '../common/EmptyState';
 import ErrorHandler from '../ErrorHandler';
 import GraphForm from './GraphForm';
