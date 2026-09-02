@@ -83,7 +83,7 @@ const GraphList = ({ type }) => {
             message="You haven't built any interactive graphs yet" 
             action={isStrategist && (
               <button onClick={() => setShowForm(true)} className="btn primary mt-4">
-                Create your first mesh
+                Build First Mesh
               </button>
             )} 
           />
