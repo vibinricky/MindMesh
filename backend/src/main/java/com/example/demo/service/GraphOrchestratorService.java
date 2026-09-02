@@ -92,6 +92,17 @@ public class GraphOrchestratorService {
     }
 
     public List<KnowledgeGraph> getPublicGraphs() {
-        return knowledgeGraphRepository.findByIsPublicTrue();
+        List<KnowledgeGraph> result = knowledgeGraphRepository.findByIsPublicTrue();
+        return result != null ? result : java.util.Collections.emptyList();
+    }
+
+    public void deleteById(Long id) {
+        KnowledgeGraph graph = knowledgeGraphRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("KnowledgeGraph not found with id: " + id));
+        knowledgeGraphRepository.deleteById(graph.getId());
+        if (eventPublisher != null) {
+            eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(),
+                    graph.getOwner() != null ? graph.getOwner().getId() : null));
+        }
     }
 }

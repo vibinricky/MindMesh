@@ -43,6 +43,12 @@ public class GraphController {
     @Autowired
     private SystemAccountRepository systemAccountRepository;
 
+    public GraphController() {}
+
+    public GraphController(GraphOrchestratorService graphOrchestratorService) {
+        this.graphOrchestratorService = graphOrchestratorService;
+    }
+
     @GetMapping
     public ResponseEntity<List<KnowledgeGraph>> getAll() {
         return ResponseEntity.ok(graphOrchestratorService.getAll());
@@ -82,8 +88,8 @@ public class GraphController {
     }
 
     @PostMapping
-    public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody GraphDto graph) {
-        KnowledgeGraph created = graphOrchestratorService.createGraphWithEvents(graph);
+    public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody KnowledgeGraph graph) {
+        KnowledgeGraph created = graphOrchestratorService.createGraph(graph);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
@@ -95,7 +101,7 @@ public class GraphController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        graphOrchestratorService.deleteGraphWithEvents(id);
+        graphOrchestratorService.deleteById(id);
         return ResponseEntity.ok("KnowledgeGraph deleted successfully.");
     }
 
