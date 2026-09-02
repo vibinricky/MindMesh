@@ -23,4 +23,16 @@ export const ping = async () => {
 export const logout = () => {
   localStorage.removeItem('token');
 };
+
 export const getCurrentUser = getProfile;
+
+const authService = {
+  login,
+  logout,
+  register,
+  getProfile,
+  ping,
+  getCurrentUser,
+};
+
+export default authService;
