@@ -33,6 +33,7 @@ const Login = () => {
             type="text" 
             value={username} 
             onChange={(e) => setUsername(e.target.value)} 
+            placeholder="MindMesh Username"
             style={{ width: '100%', padding: '0.75rem', border: 'none', borderBottom: '1px solid #d1d5db', borderRadius: '0', backgroundColor: 'transparent', boxShadow: 'none' }}
             required
           />
@@ -44,6 +45,7 @@ const Login = () => {
             type="password" 
             value={password} 
             onChange={(e) => setPassword(e.target.value)} 
+            placeholder="Enter Password"
             style={{ width: '100%', padding: '0.75rem', border: 'none', borderBottom: '1px solid #d1d5db', borderRadius: '0', backgroundColor: 'transparent', boxShadow: 'none' }}
             required
           />
