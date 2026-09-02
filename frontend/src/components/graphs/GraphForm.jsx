@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { createGraph, updateGraph } from '../../store/slices/graphSlice';
+import * as graphService from '../../services/graphService';
 import ErrorHandler from '../ErrorHandler';
 
 const GraphForm = ({ graph, onClose }) => {
-  const dispatch = useDispatch();
   const titleRef = useRef(null);
   
   const [title, setTitle] = useState('');
@@ -35,21 +33,16 @@ const GraphForm = ({ graph, onClose }) => {
     const graphData = { title, description, domain, isPublic };
     
     try {
-      let resultAction;
       if (graph) {
-        resultAction = await dispatch(updateGraph({ id: graph.id, graphData }));
+        await graphService.updateGraph(graph.id, graphData);
+        alert('KnowledgeGraph updated successfully.');
       } else {
-        resultAction = await dispatch(createGraph(graphData));
+        await graphService.createGraph(graphData);
+        alert('KnowledgeGraph created successfully.');
       }
-      
-      if (resultAction.error) {
-        setError(resultAction.payload || 'Failed to save graph');
-      } else {
-        alert(`KnowledgeGraph ${graph ? 'updated' : 'created'} successfully.`);
-        onClose();
-      }
+      onClose();
     } catch (err) {
-      setError(err.message || 'An unexpected error occurred');
+      setError(err.response?.data?.message || err.message || 'Failed to save graph');
     } finally {
       setIsLoading(false);
     }
