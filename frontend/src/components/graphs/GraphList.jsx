@@ -1,34 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchMyGraphs, deleteGraph } from '../../store/slices/graphSlice';
-import MeshPreview from '../canvas/MeshPreview';
+import { deleteGraph } from '../../store/slices/graphSlice';
+import * as graphService from '../../services/graphService';
 import EmptyState from '../common/EmptyState';
 import ErrorHandler from '../ErrorHandler';
 import GraphForm from './GraphForm';
 
 const GraphList = ({ type }) => {
   const dispatch = useDispatch();
-  const { items, loading, error, currentPage, totalPages } = useSelector((state) => state.graphs);
   const { user } = useSelector((state) => state.auth);
-  
+
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [editingGraph, setEditingGraph] = useState(null);
 
+  const loadGraphs = (page = 0) => {
+    setLoading(true);
+    setError(null);
+    graphService.getMyGraphs(page, 10)
+      .then(data => {
+        setItems(data.content || (Array.isArray(data) ? data : []));
+        setTotalPages(data.totalPages || 1);
+        setCurrentPage(data.number || page);
+      })
+      .catch(err => setError(err.response?.data?.message || 'Failed to fetch graphs'))
+      .finally(() => setLoading(false));
+  };
+
   useEffect(() => {
     if (type === 'my') {
-      dispatch(fetchMyGraphs({ page: 0, size: 10 }));
+      loadGraphs(0);
     }
-  }, [dispatch, type]);
+  }, [type]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 0 && newPage < totalPages) {
-      dispatch(fetchMyGraphs({ page: newPage, size: 10 }));
+      loadGraphs(newPage);
     }
   };
 
   const handleDelete = (id) => {
     if (window.confirm('Are you sure you want to delete this knowledge graph?')) {
-      dispatch(deleteGraph(id));
+      dispatch(deleteGraph(id)).then(() => loadGraphs(currentPage));
     }
   };
 
@@ -40,6 +57,7 @@ const GraphList = ({ type }) => {
   const closeForm = () => {
     setShowForm(false);
     setEditingGraph(null);
+    loadGraphs(currentPage);
   };
 
   const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST';
@@ -55,7 +73,7 @@ const GraphList = ({ type }) => {
         )}
       </div>
 
-      <ErrorHandler error={error ? { message: error } : null} onRetry={() => dispatch(fetchMyGraphs({ page: currentPage, size: 10 }))} />
+      <ErrorHandler error={error ? { message: error } : null} onRetry={() => loadGraphs(currentPage)} />
 
       {loading && <p className="muted">Loading meshes...</p>}
 
