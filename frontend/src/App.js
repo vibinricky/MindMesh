@@ -18,15 +18,35 @@ import ActivityLog from './components/processes/ActivityLog';
 const Profile = () => {
   const { user } = useSelector(state => state.auth);
   return (
-    <div className="card" style={{ maxWidth: 560, margin: '2rem auto' }}>
-      <h2 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>User Profile</h2>
-      <dl style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '1rem', margin: 0 }}>
-        <dt className="muted" style={{ fontWeight: 600 }}>Username</dt>
-        <dd style={{ margin: 0, fontWeight: 500 }}>{user?.username}</dd>
-        <dt className="muted" style={{ fontWeight: 600 }}>Role</dt>
-        <dd style={{ margin: 0 }}>{user?.role?.replace('ROLE_', '').replaceAll('_', ' ')}</dd>
-        <dt className="muted" style={{ fontWeight: 600 }}>Status</dt>
-        <dd style={{ margin: 0 }}>{user?.status || 'ACTIVE'}</dd>
+    <div className="card" style={{ maxWidth: 580, margin: '2rem auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
+        <div>
+          <span className="badge lime" style={{ marginBottom: '0.4rem' }}>[ ACCOUNT INFO ]</span>
+          <h2 style={{ margin: 0 }}>User Profile</h2>
+        </div>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-color)' }}>
+          ● ACTIVE
+        </span>
+      </div>
+      <dl style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '1.25rem', margin: 0, fontFamily: 'var(--font-main)', fontSize: '0.9rem' }}>
+        <dt className="muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Username</dt>
+        <dd style={{ margin: 0, fontWeight: 600, color: 'var(--text-primary)' }}>{user?.username}</dd>
+        <dt className="muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Domain Role</dt>
+        <dd style={{ margin: 0 }}>
+          <span style={{
+            background: 'var(--surface-color-elevated)',
+            border: '1px solid var(--border-strong)',
+            padding: '0.2rem 0.6rem',
+            borderRadius: 'var(--radius-pill)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.75rem',
+            color: 'var(--accent-color)'
+          }}>
+            {user?.role?.replace('ROLE_', '').replaceAll('_', ' ') || 'ANALYST'}
+          </span>
+        </dd>
+        <dt className="muted" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Status</dt>
+        <dd style={{ margin: 0, color: 'var(--accent-color)', fontFamily: 'var(--font-mono)' }}>{user?.status || 'ACTIVE'}</dd>
       </dl>
     </div>
   );

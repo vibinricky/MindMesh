@@ -92,61 +92,299 @@ const GraphCanvas = () => {
     try { await graphService.updateNode(moved.id, moved); } catch (err) { setError(err.response?.data?.message || 'Unable to save node position'); loadData(); }
   };
 
-  if (loading) return <p>Loading canvas...</p>;
-  if (error && !graph) return <ErrorHandler error={{ message: error }} onRetry={loadData} />;
-  return <div>
-    <ErrorHandler error={error ? { message: error } : null} onRetry={loadData} />
-    {message && <p style={{ color: '#18794e' }}>{message}</p>}
-    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, alignItems: 'start', marginBottom: 14 }}>
-      <div><h2 style={{ marginBottom: 4 }}>{graph.title}</h2><p>{graph.description}</p></div>
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <button onClick={() => setShowInsights(true)}>View Insights</button>
-        {canEdit && <><button onClick={() => { setEdgeSource(null); setSelected(null); setClickPos({ x: 300, y: 220 }); setNodeForm({}); }}>Add Node</button><button onClick={() => { setEdgeSource({ selecting: true }); setMessage('Choose a source node.'); }}>Connect Nodes</button><button onClick={calculate}>Calculate Complexity</button></>}
+  if (loading) {
+    return (
+      <div className="container" style={{ padding: '3rem 0', textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--text-secondary)' }}>
+        Loading interactive canvas...
       </div>
-    </div>
-    {canEdit && <form onSubmit={invite} style={{ marginBottom: 12 }}><label>Invite collaborator: <input value={inviteeUsername} onChange={(e) => setInviteeUsername(e.target.value)} placeholder="Username" required /></label> <button>Send invite</button></form>}
-    {edgeSource && <p style={{ background: '#e9f4ff', padding: 8 }}>Connection mode: {edgeSource.selecting ? 'click a source node' : `select a node to connect from ${edgeSource.label}`}. Click empty canvas to cancel.</p>}
-    <div style={{ height: 600, border: '1px solid #cbd5e1', background: '#f8fafc' }}><svg width="100%" height="100%" onClick={handleCanvasClick} onMouseMove={moveNode} onMouseUp={finishMove} onMouseLeave={finishMove}>
-      {edges.map((edge) => <g key={edge.id} onDoubleClick={(event) => { event.stopPropagation(); removeEdge(edge.id); }}><EdgeElement edge={edge} sourceNode={nodes.find((node) => node.id === edge.sourceNodeId)} targetNode={nodes.find((node) => node.id === edge.targetNodeId)} /></g>)}
-      {nodes.map((node) => <NodeElement key={node.id} node={node} onMouseDown={(clicked) => { if (canEdit && !edgeSource) setDragging(clicked); }} onClick={(clicked) => edgeSource?.selecting ? setEdgeSource(clicked) : handleNodeClick(clicked)} />)}
-    </svg></div>
-    <small>Strategists: click blank canvas to add a node; click a node to edit it; double-click a connection to delete it.</small>
-    {nodeForm && <NodeForm node={nodeForm.id ? nodeForm : null} onSubmit={saveNode} onClose={() => setNodeForm(null)} />}
-    {selected && nodeForm && canEdit && <button onClick={removeNode} style={{ marginTop: 12, color: '#b91c1c' }}>Delete selected node</button>}
-    {edgeSource && !edgeSource.selecting && edgeTarget && <EdgeForm sourceNode={edgeSource} targetNode={edgeTarget} onSubmit={saveEdge} onClose={() => { setEdgeSource(null); setEdgeTarget(null); }} />}
-    {showInsights && (
-      <div style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ background: '#fff', width: '500px', borderRadius: '8px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', overflow: 'hidden' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 32px 16px 32px' }}>
-            <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '600', color: '#111827' }}>Mesh Insights: {graph.title}</h3>
-            <button onClick={() => setShowInsights(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#6b7280' }}>&times;</button>
+    );
+  }
+
+  if (error && !graph) {
+    return (
+      <div className="container" style={{ paddingTop: '2rem' }}>
+        <ErrorHandler error={{ message: error }} onRetry={loadData} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '3rem' }}>
+      <ErrorHandler error={error ? { message: error } : null} onRetry={loadData} />
+      
+      {message && (
+        <div style={{
+          padding: '0.65rem 1rem',
+          background: 'var(--accent-dim)',
+          border: '1px solid var(--accent-border)',
+          borderRadius: 'var(--radius-md)',
+          color: 'var(--accent-color)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.8rem',
+          marginBottom: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          <span>[✓] {message}</span>
+        </div>
+      )}
+
+      {/* TOP HEADER & ACTION CONTROLS */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: '1.5rem',
+        flexWrap: 'wrap',
+        gap: '1rem'
+      }}>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+            <span className="badge lime">[ GRAPH CANVAS ]</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-color)' }}>
+              NODES: {nodes.length} | EDGES: {edges.length}
+            </span>
           </div>
-          <div style={{ padding: '0 32px 32px 32px' }}>
-            <div style={{ marginBottom: '24px' }}>
-              <span style={{ fontSize: '12px', fontWeight: '600', color: '#60a5fa', letterSpacing: '0.05em', textTransform: 'uppercase' }}>DESCRIPTION</span>
-              <p style={{ margin: '4px 0 0 0', color: '#374151' }}>{graph.description || 'No description available'}</p>
-            </div>
-            <div style={{ display: 'flex', gap: '48px', marginBottom: '32px' }}>
-              <div style={{ borderLeft: '2px solid #111827', paddingLeft: '16px' }}>
-                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '4px' }}>Complexity Score</div>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>{graph.complexityScore ? graph.complexityScore.toFixed(1) : '0.0'}</div>
+          <h1 style={{ margin: 0, fontSize: 'clamp(1.75rem, 3vw, 2.25rem)' }}>{graph.title}</h1>
+          <p className="muted" style={{ margin: '0.35rem 0 0 0', maxWidth: '640px' }}>
+            {graph.description || 'Interactive multi-node knowledge mesh.'}
+          </p>
+        </div>
+
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button onClick={() => setShowInsights(true)} style={{ background: 'var(--surface-color)' }}>
+            <span>View Insights</span>
+            <span>↗</span>
+          </button>
+          {canEdit && (
+            <>
+              <button
+                onClick={() => { setEdgeSource(null); setSelected(null); setClickPos({ x: 300, y: 220 }); setNodeForm({}); }}
+                className="btn primary"
+              >
+                <span>+ Add Node</span>
+              </button>
+              <button
+                onClick={() => { setEdgeSource({ selecting: true }); setMessage('Click a source node to begin connection.'); }}
+                style={{ background: 'var(--surface-color)' }}
+              >
+                <span>Connect Nodes</span>
+              </button>
+              <button
+                onClick={calculate}
+                style={{ background: 'var(--surface-color)' }}
+              >
+                <span>Calculate Score</span>
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* COLLABORATOR INVITE BAR */}
+      {canEdit && (
+        <form
+          onSubmit={invite}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            background: 'var(--surface-color)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.4rem 0.75rem',
+            marginBottom: '1rem',
+            maxWidth: '520px'
+          }}
+        >
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-secondary)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
+            Invite Collaborator:
+          </span>
+          <input
+            value={inviteeUsername}
+            onChange={(e) => setInviteeUsername(e.target.value)}
+            placeholder="Username"
+            required
+            style={{
+              padding: '0.35rem 0.65rem',
+              fontSize: '0.8rem',
+              border: '1px solid var(--border-strong)',
+              background: 'var(--surface-color-elevated)'
+            }}
+          />
+          <button type="submit" className="btn primary" style={{ padding: '0.35rem 0.85rem', fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+            Send Invite
+          </button>
+        </form>
+      )}
+
+      {/* CONNECTION MODE BANNER */}
+      {edgeSource && (
+        <div style={{
+          background: 'var(--accent-dim)',
+          border: '1px solid var(--accent-border)',
+          borderRadius: 'var(--radius-md)',
+          padding: '0.65rem 1rem',
+          marginBottom: '1rem',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.8rem',
+          color: 'var(--accent-color)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span>
+            [CONNECT MODE] {edgeSource.selecting ? 'Click a source node on the canvas' : `Select target node to connect from "${edgeSource.label}"`}
+          </span>
+          <button
+            onClick={() => { setEdgeSource(null); setMessage('Connection cancelled.'); }}
+            style={{ background: 'transparent', border: '1px solid var(--accent-color)', color: 'var(--accent-color)', padding: '0.2rem 0.6rem', fontSize: '0.7rem' }}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
+      {/* INTERACTIVE SVG CANVAS */}
+      <div style={{
+        height: 600,
+        border: '1px solid var(--border-color)',
+        borderRadius: 'var(--radius-lg)',
+        background: '#090a0f',
+        position: 'relative',
+        overflow: 'hidden',
+        boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.8)'
+      }}>
+        <svg
+          width="100%"
+          height="100%"
+          onClick={handleCanvasClick}
+          onMouseMove={moveNode}
+          onMouseUp={finishMove}
+          onMouseLeave={finishMove}
+        >
+          {/* Subtle Canvas Dot Grid Pattern */}
+          <defs>
+            <pattern id="canvas-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill="rgba(255, 255, 255, 0.08)" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#canvas-grid)" />
+
+          {/* Edges */}
+          {edges.map((edge) => (
+            <g key={edge.id} onDoubleClick={(event) => { event.stopPropagation(); removeEdge(edge.id); }}>
+              <EdgeElement
+                edge={edge}
+                sourceNode={nodes.find((node) => node.id === edge.sourceNodeId)}
+                targetNode={nodes.find((node) => node.id === edge.targetNodeId)}
+              />
+            </g>
+          ))}
+
+          {/* Nodes */}
+          {nodes.map((node) => (
+            <NodeElement
+              key={node.id}
+              node={node}
+              onMouseDown={(clicked) => { if (canEdit && !edgeSource) setDragging(clicked); }}
+              onClick={(clicked) => edgeSource?.selecting ? setEdgeSource(clicked) : handleNodeClick(clicked)}
+            />
+          ))}
+        </svg>
+      </div>
+
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: '0.75rem',
+        fontFamily: 'var(--font-mono)',
+        fontSize: '0.725rem',
+        color: 'var(--text-muted)'
+      }}>
+        <span>INTERACTION: Click empty canvas to add node • Drag to position • Double click connection to remove</span>
+        <span>MINDMESH CANVAS V2</span>
+      </div>
+
+      {nodeForm && <NodeForm node={nodeForm.id ? nodeForm : null} onSubmit={saveNode} onClose={() => setNodeForm(null)} />}
+      {selected && nodeForm && canEdit && (
+        <button onClick={removeNode} className="btn danger" style={{ marginTop: 12 }}>
+          Delete Selected Node
+        </button>
+      )}
+      {edgeSource && !edgeSource.selecting && edgeTarget && (
+        <EdgeForm
+          sourceNode={edgeSource}
+          targetNode={edgeTarget}
+          onSubmit={saveEdge}
+          onClose={() => { setEdgeSource(null); setEdgeTarget(null); }}
+        />
+      )}
+
+      {/* INSIGHTS MODAL */}
+      {showInsights && (
+        <div className="modal-overlay" onClick={() => setShowInsights(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
+              <div>
+                <span className="badge lime" style={{ marginBottom: '0.25rem' }}>[ MESH TELEMETRY ]</span>
+                <h3 style={{ margin: 0 }}>Mesh Insights</h3>
               </div>
-              <div style={{ borderLeft: '2px solid #111827', paddingLeft: '16px' }}>
-                <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '4px' }}>Node Count</div>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#111827' }}>{nodes.length}</div>
+              <button
+                onClick={() => setShowInsights(false)}
+                style={{ background: 'none', border: 'none', fontSize: '1.25rem', cursor: 'pointer', color: 'var(--text-secondary)' }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+                TITLE & DESCRIPTION
+              </span>
+              <h4 style={{ margin: '0.25rem 0', color: 'var(--text-primary)' }}>{graph.title}</h4>
+              <p className="muted" style={{ margin: 0, fontSize: '0.875rem' }}>{graph.description || 'No description provided.'}</p>
+            </div>
+
+            <div style={{ marginBottom: '1.25rem' }}>
+              <CapacityBar score={graph.complexityScore || 0} />
+            </div>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '1rem',
+              background: 'var(--surface-color-elevated)',
+              border: '1px solid var(--border-color)',
+              borderRadius: 'var(--radius-md)',
+              padding: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Active Nodes</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)' }}>{nodes.length}</div>
+              </div>
+              <div>
+                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>Active Edges</div>
+                <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, color: 'var(--accent-color)' }}>{edges.length}</div>
               </div>
             </div>
-            <div style={{ marginBottom: '32px' }}>
-              <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Conceptual Framework</h4>
-              <p style={{ margin: 0, color: '#6b7280', fontSize: '14px' }}>This mesh is currently in a high-level state with no specific child nodes defined yet.</p>
-            </div>
-            <button onClick={() => setShowInsights(false)} style={{ width: '100%', padding: '12px', background: '#2563eb', color: '#fff', border: 'none', borderRadius: '6px', fontWeight: '500', cursor: 'pointer' }}>
-              Close Insight
+
+            <button
+              onClick={() => setShowInsights(false)}
+              className="btn primary"
+              style={{ width: '100%' }}
+            >
+              <span>Close Insights</span>
+              <span>↗</span>
             </button>
           </div>
         </div>
-      </div>
-    )}
-  </div>;
+      )}
+    </div>
+  );
 };
+
 export default GraphCanvas;

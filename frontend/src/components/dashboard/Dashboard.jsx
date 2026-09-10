@@ -4,23 +4,54 @@ import StatCards from './StatCards';
 import RecentActivity from './RecentActivity';
 
 const Dashboard = () => {
-  const { user } = useSelector(state => state.auth);
-  
+  const { user } = useSelector((state) => state.auth);
+
   return (
-    <div style={{ padding: '2rem 4rem' }}>
-      <div style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '0.5rem' }}>Platform Governance & Orchestration</h2>
-        <p style={{ color: '#475569', fontSize: '0.95rem' }}>Master control center for MindMesh knowledge architecture and global intelligence flow.</p>
-      </div>
-      <StatCards />
-      <div style={{ marginTop: '4rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ width: '8px', height: '8px', backgroundColor: '#10b981', borderRadius: '50%', display: 'inline-block' }}></span>
-          Real-Time Governance Logs
-        </h3>
-        <div>
-          <RecentActivity />
+    <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '3rem' }}>
+      {/* EDITORIAL HEADER */}
+      <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.6rem', flexWrap: 'wrap' }}>
+          <span className="badge lime">[ OVERVIEW // DASHBOARD ]</span>
+          <span className="badge">WORKSPACE ACTIVE</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+            USER: {user?.username || 'user'}
+          </span>
         </div>
+        <h1 style={{ marginBottom: '0.5rem' }}>
+          PLATFORM <span className="lime-accent">GOVERNANCE</span> & ANALYTICS
+        </h1>
+        <p className="muted" style={{ fontSize: '1rem', maxWidth: '640px', margin: 0 }}>
+          Central overview for your MindMesh network graphs, knowledge assets, and real-time activity.
+        </p>
+      </div>
+
+      {/* STAT CARDS */}
+      <StatCards />
+
+      {/* ACTIVITY SECTION */}
+      <div style={{ marginTop: '3rem' }}>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '1rem',
+          flexWrap: 'wrap',
+          gap: '0.5rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{
+              width: '8px',
+              height: '8px',
+              backgroundColor: 'var(--accent-color)',
+              borderRadius: '50%',
+              display: 'inline-block',
+              boxShadow: '0 0 8px var(--accent-color)'
+            }} />
+            <h3 style={{ margin: 0 }}>Recent Activity Logs</h3>
+          </div>
+          <span className="badge">[ LIVE AUDIT TRAIL ]</span>
+        </div>
+        <RecentActivity />
       </div>
     </div>
   );

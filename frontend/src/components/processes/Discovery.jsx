@@ -17,36 +17,95 @@ const Discovery = () => {
   }, []);
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#1e293b', margin: 0 }}>Knowledge Discovery</h2>
-        <p style={{ color: '#64748b', fontSize: '0.95rem', margin: 0 }}>Explore public meshes and find inspiration for your own work.</p>
+    <div className="container">
+      {/* EDITORIAL HEADER */}
+      <div style={{ marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+          <span className="badge lime">[ DISCOVERY ]</span>
+          <span className="badge">PUBLIC KNOWLEDGE BASE</span>
+        </div>
+        <h1 style={{ margin: '0 0 0.5rem 0' }}>
+          KNOWLEDGE <span className="lime-accent">DISCOVERY</span>
+        </h1>
+        <p className="muted" style={{ margin: 0, maxWidth: '600px' }}>
+          Explore published network graphs from the community and inspect complex knowledge domains.
+        </p>
       </div>
       
-      {loading && <p>Loading public meshes...</p>}
+      {loading && (
+        <div style={{ padding: '3rem 0', textAlign: 'center', color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)' }}>
+          Loading public meshes...
+        </div>
+      )}
+
       {error && <ErrorHandler error={{ message: error }} />}
-      {!loading && graphs.length === 0 && <EmptyState message="No public meshes available." />}
+
+      {!loading && graphs.length === 0 && (
+        <div className="card" style={{ padding: '3rem 2rem', textAlign: 'center' }}>
+          <EmptyState message="No public knowledge graphs available at this time." />
+        </div>
+      )}
+
       {!loading && graphs.length > 0 && (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '1.5rem'
+          }}>
             {graphs.map(graph => (
-              <MeshPreview key={graph.id} graph={graph} showActions={false} />
+              <MeshPreview key={graph.id} graph={graph} />
             ))}
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem', marginTop: '3rem', color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>
-            <span style={{ color: '#cbd5e1', cursor: 'not-allowed' }}>Previous</span>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '2rem',
+            marginTop: '3rem',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.85rem',
+            color: 'var(--text-secondary)'
+          }}>
+            <span style={{ color: 'var(--text-muted)', cursor: 'not-allowed' }}>← Previous</span>
             <span>Page 1 of 1 ({graphs.length} Total)</span>
-            <span style={{ color: '#1e293b', cursor: 'pointer' }}>Next</span>
+            <span style={{ color: 'var(--text-primary)', cursor: 'pointer' }}>Next →</span>
           </div>
         </>
       )}
 
-      <div style={{ marginTop: '4rem' }}>
-        <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '1.25rem' }}>Trending Topics</h3>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          {['#PHYSICS', '#HISTORY', '#ETHICS', '#BIOLOGY', '#LINGUISTICS'].map(tag => (
-            <span key={tag} style={{ backgroundColor: '#eff6ff', color: '#2563eb', padding: '0.5rem 1rem', borderRadius: '1.5rem', fontSize: '0.875rem', fontWeight: '600', border: '1px solid #bfdbfe' }}>
+      {/* TRENDING TOPICS */}
+      <div style={{ marginTop: '4rem', borderTop: '1px solid var(--border-color)', paddingTop: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.25rem' }}>
+          <span className="badge">[ TOPIC DIRECTORY ]</span>
+          <h3 style={{ margin: 0 }}>Trending Domains</h3>
+        </div>
+        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+          {['#NEUROSCIENCE', '#AI_MODELS', '#PHYSICS', '#ECONOMICS', '#BIOINFORMATICS', '#LINGUISTICS', '#LOGIC'].map(tag => (
+            <span
+              key={tag}
+              style={{
+                backgroundColor: 'var(--surface-color)',
+                color: 'var(--text-primary)',
+                padding: '0.4rem 0.85rem',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '0.75rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: '600',
+                border: '1px solid var(--border-strong)',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--accent-color)';
+                e.currentTarget.style.color = 'var(--accent-color)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border-strong)';
+                e.currentTarget.style.color = 'var(--text-primary)';
+              }}
+            >
               {tag}
             </span>
           ))}

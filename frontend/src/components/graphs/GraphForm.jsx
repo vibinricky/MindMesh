@@ -35,10 +35,8 @@ const GraphForm = ({ graph, onClose }) => {
     try {
       if (graph) {
         await graphService.updateGraph(graph.id, graphData);
-        alert('KnowledgeGraph updated successfully.');
       } else {
         await graphService.createGraph(graphData);
-        alert('KnowledgeGraph created successfully.');
       }
       onClose();
     } catch (err) {
@@ -48,74 +46,98 @@ const GraphForm = ({ graph, onClose }) => {
     }
   };
 
-  const modalStyle = {
-    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex',
-    alignItems: 'center', justifyContent: 'center', zIndex: 1000
-  };
-
-  const contentStyle = {
-    background: '#fff', padding: '20px', borderRadius: '8px',
-    width: '100%', maxWidth: '500px'
-  };
-
   return (
-    <div style={modalStyle}>
-      <div style={contentStyle}>
-        <h2>{graph ? 'Edit Mesh' : 'Create New Mesh'}</h2>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
+          <div>
+            <span className="badge lime" style={{ marginBottom: '0.25rem' }}>
+              {graph ? '[ EDIT GRAPH ]' : '[ NEW GRAPH ]'}
+            </span>
+            <h3 style={{ margin: 0 }}>
+              {graph ? 'Edit Knowledge Mesh' : 'Create Knowledge Mesh'}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '1.25rem', cursor: 'pointer', padding: 0 }}
+          >
+            ✕
+          </button>
+        </div>
+
         <ErrorHandler error={error ? { message: error } : null} />
         
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="title" style={{ display: 'block', marginBottom: '5px' }}>Mesh Title</label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label htmlFor="title" style={{ display: 'block', marginBottom: '0.4rem', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              Mesh Title *
+            </label>
             <input 
               id="title"
               ref={titleRef}
               type="text" 
               value={title} 
               onChange={(e) => setTitle(e.target.value)} 
+              placeholder="e.g. Cognitive Systems Architecture"
               required
-              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
             />
           </div>
           
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="description" style={{ display: 'block', marginBottom: '5px' }}>Description</label>
+          <div>
+            <label htmlFor="description" style={{ display: 'block', marginBottom: '0.4rem', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              Description
+            </label>
             <textarea 
               id="description"
               value={description} 
               onChange={(e) => setDescription(e.target.value)} 
-              style={{ width: '100%', padding: '8px', boxSizing: 'border-box', minHeight: '80px' }}
+              placeholder="Brief summary of nodes and relationships..."
+              style={{ minHeight: '80px', resize: 'vertical' }}
             />
           </div>
           
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="domain" style={{ display: 'block', marginBottom: '5px' }}>Domain</label>
+          <div>
+            <label htmlFor="domain" style={{ display: 'block', marginBottom: '0.4rem', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              Domain / Subject
+            </label>
             <input 
               id="domain"
               type="text" 
               value={domain} 
               onChange={(e) => setDomain(e.target.value)} 
-              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
+              placeholder="e.g. Neuroscience, Economics, ML"
             />
           </div>
           
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="isPublic" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{
+            background: 'var(--surface-color-elevated)',
+            border: '1px solid var(--border-color)',
+            borderRadius: 'var(--radius-md)',
+            padding: '0.75rem 1rem',
+            marginTop: '0.25rem'
+          }}>
+            <label htmlFor="isPublic" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', margin: 0 }}>
               <input 
                 id="isPublic"
                 type="checkbox" 
                 checked={isPublic} 
                 onChange={(e) => setIsPublic(e.target.checked)} 
+                style={{ width: '16px', height: '16px', accentColor: 'var(--accent-color)' }}
               />
-              Visibility toggle (Make this mesh public)
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: '500' }}>
+                Make this knowledge mesh public in Discovery
+              </span>
             </label>
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-            <button type="button" onClick={onClose} style={{ padding: '8px 16px' }}>Cancel</button>
-            <button type="submit" disabled={isLoading} style={{ padding: '8px 16px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px' }}>
-              {isLoading ? 'Saving...' : (graph ? 'Update Mesh' : 'Build Mesh')}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.25rem' }}>
+            <button type="button" onClick={onClose} style={{ background: 'transparent' }}>
+              Cancel
+            </button>
+            <button type="submit" disabled={isLoading} className="btn primary">
+              <span>{isLoading ? 'Saving...' : (graph ? 'Update Mesh' : 'Create Mesh')}</span>
+              <span>↗</span>
             </button>
           </div>
         </form>

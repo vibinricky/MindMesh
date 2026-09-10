@@ -12,26 +12,40 @@ const EdgeElement = ({ edge, sourceNode, targetNode }) => {
   const midY = (sy + ty) / 2;
 
   return (
-    <g>
+    <g style={{ cursor: 'pointer' }}>
       <line 
         x1={sx} 
         y1={sy} 
         x2={tx} 
         y2={ty} 
-        stroke="#999" 
-        strokeWidth={Math.max(1, edge.weight || 1)} 
+        stroke="#323746" 
+        strokeWidth={Math.max(1.5, edge.weight || 1.5)} 
       />
-      <text 
-        x={midX} 
-        y={midY} 
-        fill="#666" 
-        fontSize="10px" 
-        textAnchor="middle"
-        dy="-5"
-        style={{ pointerEvents: 'none' }}
-      >
-        {edge.relationshipType}
-      </text>
+      {edge.relationshipType && (
+        <g transform={`translate(${midX}, ${midY})`}>
+          <rect
+            x="-35"
+            y="-10"
+            width="70"
+            height="18"
+            fill="#0b0d12"
+            stroke="#222631"
+            strokeWidth="1"
+            rx="3"
+          />
+          <text 
+            x="0" 
+            y="3" 
+            fill="#dcff02" 
+            fontSize="9px" 
+            fontFamily="'Space Mono', monospace"
+            textAnchor="middle"
+            style={{ pointerEvents: 'none' }}
+          >
+            {edge.relationshipType.length > 10 ? edge.relationshipType.substring(0, 10) + '..' : edge.relationshipType}
+          </text>
+        </g>
+      )}
     </g>
   );
 };

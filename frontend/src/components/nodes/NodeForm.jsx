@@ -19,43 +19,62 @@ const NodeForm = ({ node, onSubmit, onClose }) => {
     onSubmit({ ...node, label, type });
   };
 
-  const modalStyle = {
-    position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex',
-    alignItems: 'center', justifyContent: 'center', zIndex: 1000
-  };
-
-  const contentStyle = {
-    background: '#fff', padding: '20px', borderRadius: '8px',
-    width: '100%', maxWidth: '300px'
-  };
-
   return (
-    <div style={modalStyle}>
-      <div style={contentStyle}>
-        <h3>{node ? 'Edit Node' : 'Add Node'}</h3>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="nodeLabel" style={{ display: 'block', marginBottom: '5px' }}>Label</label>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" style={{ maxWidth: '360px' }} onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.65rem' }}>
+          <div>
+            <span className="badge lime" style={{ marginBottom: '0.2rem', fontSize: '0.65rem' }}>
+              [ CANVAS NODE ]
+            </span>
+            <h3 style={{ margin: 0, fontSize: '1.15rem' }}>
+              {node?.id ? 'Edit Node' : 'Add Node'}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', fontSize: '1.15rem', cursor: 'pointer', padding: 0 }}
+          >
+            ✕
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label htmlFor="nodeLabel" style={{ display: 'block', marginBottom: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              Node Label *
+            </label>
             <input 
               id="nodeLabel"
               ref={inputRef}
               type="text" 
               value={label} 
               onChange={(e) => setLabel(e.target.value)} 
+              placeholder="e.g. Neural Cortex"
               required
-              style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
             />
           </div>
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="nodeType" style={{ display: 'block', marginBottom: '5px' }}>Node Type</label>
-            <select id="nodeType" value={type} onChange={(e) => setType(e.target.value)} style={{ width: '100%', padding: '8px' }}>
-              <option>Concept</option><option>Question</option><option>Evidence</option><option>Outcome</option>
+
+          <div>
+            <label htmlFor="nodeType" style={{ display: 'block', marginBottom: '0.35rem', fontFamily: 'var(--font-mono)', fontSize: '0.725rem', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
+              Node Classification
+            </label>
+            <select id="nodeType" value={type} onChange={(e) => setType(e.target.value)}>
+              <option value="Concept">Concept</option>
+              <option value="Question">Question</option>
+              <option value="Evidence">Evidence</option>
+              <option value="Outcome">Outcome</option>
             </select>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
-            <button type="button" onClick={onClose} style={{ padding: '5px 10px' }}>Cancel</button>
-            <button type="submit" style={{ padding: '5px 10px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px' }}>Save</button>
+
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.5rem', marginTop: '0.5rem' }}>
+            <button type="button" onClick={onClose} style={{ background: 'transparent' }}>
+              Cancel
+            </button>
+            <button type="submit" className="btn primary">
+              <span>Save Node</span>
+              <span>↗</span>
+            </button>
           </div>
         </form>
       </div>

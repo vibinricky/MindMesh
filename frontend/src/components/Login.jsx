@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { login } from '../store/slices/authSlice';
-import ErrorHandler from './ErrorHandler';
+import AuthLayout from './auth/AuthLayout';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -21,45 +22,123 @@ const Login = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '4rem 4rem' }}>
-      <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '2rem' }}>Login to MindMesh</h2>
-      {location.state?.message && <p style={{ color: '#10b981', marginBottom: '1rem' }}>{location.state.message}</p>}
-      <ErrorHandler error={error ? { message: error } : null} />
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div>
-          <label htmlFor="username" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>Username</label>
-          <input 
-            id="username"
-            type="text" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            placeholder="MindMesh Username"
-            style={{ width: '100%', padding: '0.75rem', border: 'none', borderBottom: '1px solid #d1d5db', borderRadius: '0', backgroundColor: 'transparent', boxShadow: 'none' }}
-            required
-          />
+    <AuthLayout
+      mode="login"
+      heroBadge="KNOWLEDGE GRAPH"
+      heroTitleLine1="NETWORK GRAPHS &"
+      heroTitleHighlight="KNOWLEDGE"
+      heroTitleLine2="BASES."
+      heroDescription="Organize complex information, map interconnected data, and visualize knowledge graphs with MindMesh."
+      cardTag="GRAPH OVERVIEW"
+      metric1Value="1,240+"
+      metric1Label="CONNECTED NODES"
+      metric2Value="98.6%"
+      metric2Label="SEMANTIC RELEVANCE"
+      cardFooter="INTERACTIVE CANVAS • REAL-TIME SYNC"
+      specs={[
+        { key: 'PLATFORM', val: 'MINDMESH' },
+        { key: 'WORKSPACE', val: 'GRAPHS & NODES' },
+        { key: 'VERSION', val: '2.0' },
+      ]}
+    >
+      {/* FORM HEADER */}
+      <div className="y2k-terminal-badge-row">
+        <div className="y2k-terminal-badge">
+          <span className="y2k-pulse-dot" />
+          <span>ACCOUNT LOGIN</span>
         </div>
-        <div>
-          <label htmlFor="password" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600, color: '#374151' }}>Password</label>
-          <input 
-            id="password"
-            type="password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            placeholder="Enter Password"
-            style={{ width: '100%', padding: '0.75rem', border: 'none', borderBottom: '1px solid #d1d5db', borderRadius: '0', backgroundColor: 'transparent', boxShadow: 'none' }}
-            required
-          />
+        <span className="y2k-terminal-index">01 / 02</span>
+      </div>
+
+      <h2 className="y2k-form-title">Log In</h2>
+      <p className="y2k-form-subtitle">
+        Enter your credentials to access your network graphs.
+      </p>
+
+      {/* SUCCESS MESSAGE */}
+      {location.state?.message && (
+        <div className="y2k-success-box">
+          <div className="y2k-success-tag">Success</div>
+          <div>{location.state.message}</div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
-          <button type="submit" disabled={isLoading} style={{ backgroundColor: '#2563eb', color: 'white', padding: '0.5rem 2rem', border: 'none', borderRadius: '0.375rem', fontWeight: 500, cursor: 'pointer' }}>
-            {isLoading ? 'Logging in...' : 'Login'}
-          </button>
-          <span style={{ color: '#6b7280', fontSize: '0.875rem' }}>
-            Don't have an account? <Link to="/register" style={{ color: '#4f46e5', textDecoration: 'none', fontWeight: 500 }}>Register here</Link>
-          </span>
+      )}
+
+      {/* ERROR MESSAGE */}
+      {error && (
+        <div className="y2k-alert-box">
+          <div className="y2k-alert-tag">Login Error</div>
+          <div>{typeof error === 'string' ? error : error?.message || 'Login failed. Please check your credentials.'}</div>
+        </div>
+      )}
+
+      {/* FORM */}
+      <form onSubmit={handleSubmit} className="y2k-form">
+        <div className="y2k-field-group">
+          <div className="y2k-label-row">
+            <label htmlFor="username" className="y2k-label">
+              Username
+            </label>
+          </div>
+          <div className="y2k-input-wrapper">
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
+              className="y2k-input"
+              autoComplete="username"
+              required
+            />
+          </div>
+        </div>
+
+        <div className="y2k-field-group">
+          <div className="y2k-label-row">
+            <label htmlFor="password" className="y2k-label">
+              Password
+            </label>
+          </div>
+          <div className="y2k-input-wrapper">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              className="y2k-input"
+              autoComplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              className="y2k-toggle-pwd"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="y2k-btn-primary"
+        >
+          <span>{isLoading ? 'Logging in...' : 'Log In'}</span>
+          <span className="y2k-btn-arrow">↗</span>
+        </button>
+
+        <div className="y2k-switch-row">
+          <span className="y2k-switch-text">Don't have an account?</span>
+          <Link to="/register" className="y2k-switch-link">
+            <span>Create an account</span>
+            <span>↗</span>
+          </Link>
         </div>
       </form>
-    </div>
+    </AuthLayout>
   );
 };
 

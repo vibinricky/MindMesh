@@ -1,23 +1,69 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const MeshPreview = ({ graph, onEdit, onDelete, showActions }) => {
+const MeshPreview = ({ graph }) => {
   return (
-    <div style={{ backgroundColor: 'white', borderRadius: '0.5rem', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)', padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ backgroundColor: '#2563eb', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.25rem 0.75rem', borderRadius: '1rem', alignSelf: 'flex-start', marginBottom: '1rem', textTransform: 'uppercase' }}>
-        Public Mesh
+    <div className="card" style={{
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      minHeight: '260px',
+      position: 'relative'
+    }}>
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+          <span className="badge lime" style={{ fontSize: '0.65rem' }}>
+            PUBLIC MESH
+          </span>
+          {graph.domain && (
+            <span className="badge" style={{ fontSize: '0.65rem' }}>
+              {graph.domain}
+            </span>
+          )}
+        </div>
+
+        <h3 style={{ margin: '0 0 0.5rem 0', wordBreak: 'break-word' }}>
+          {graph.title}
+        </h3>
+
+        <p className="muted" style={{
+          fontSize: '0.875rem',
+          margin: '0 0 1.25rem 0',
+          lineHeight: 1.5,
+          wordBreak: 'break-word',
+          display: '-webkit-box',
+          WebkitLineClamp: 3,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden'
+        }}>
+          {graph.description || 'No description provided for this knowledge graph.'}
+        </p>
       </div>
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: '#1e293b', marginBottom: '0.5rem', marginTop: 0 }}>{graph.title}</h3>
-      <p style={{ color: '#64748b', fontSize: '0.875rem', flex: 1, marginBottom: '1.5rem', marginTop: '0.5rem', wordBreak: 'break-word' }}>{graph.description || 'No description provided'}</p>
-      
-      <div style={{ display: 'flex', justifyContent: 'space-between', color: '#64748b', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-        <span>Complexity: {(graph.complexityScore || 0).toFixed(1)}</span>
-        <span>Owner: {graph.ownerUsername || 'admin'}</span>
+
+      <div>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.75rem',
+          color: 'var(--text-secondary)',
+          borderTop: '1px solid var(--border-subtle)',
+          paddingTop: '0.75rem',
+          marginBottom: '1rem'
+        }}>
+          <span>COMPLEXITY: <strong style={{ color: 'var(--accent-color)' }}>{(graph.complexityScore || 0).toFixed(1)}</strong></span>
+          <span>BY: <strong style={{ color: 'var(--text-primary)' }}>{graph.ownerUsername || 'admin'}</strong></span>
+        </div>
+
+        <Link
+          to={`/graphs/${graph.id}/canvas`}
+          className="btn primary"
+          style={{ width: '100%', boxSizing: 'border-box' }}
+        >
+          <span>View Canvas</span>
+          <span>↗</span>
+        </Link>
       </div>
-      
-      <Link to={`/graphs/${graph.id}/canvas`} style={{ display: 'block', textAlign: 'center', backgroundColor: '#2563eb', color: 'white', textDecoration: 'none', padding: '0.75rem 1rem', borderRadius: '0.375rem', fontWeight: '500', width: '100%', boxSizing: 'border-box' }}>
-        View Canvas
-      </Link>
     </div>
   );
 };

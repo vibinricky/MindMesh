@@ -9,43 +9,111 @@ const RecentActivity = () => {
   }, []);
 
   return (
-    <div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1.5fr 1fr', padding: '1rem 0', borderBottom: '2px solid #e2e8f0', fontWeight: 'bold', color: '#475569' }}>
+    <div style={{
+      background: 'var(--surface-color)',
+      border: '1px solid var(--border-color)',
+      borderRadius: 'var(--radius-lg)',
+      overflow: 'hidden'
+    }}>
+      {/* TABLE HEADER */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1.5fr 1fr 1.8fr 1fr',
+        padding: '0.85rem 1.5rem',
+        background: '#0b0d12',
+        borderBottom: '1px solid var(--border-color)',
+        fontFamily: 'var(--font-mono)',
+        fontSize: '0.725rem',
+        fontWeight: '700',
+        color: 'var(--text-secondary)',
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em'
+      }}>
         <div>Event Timestamp</div>
-        <div>Action Node</div>
-        <div>Target Intelligence</div>
-        <div>Governance Status</div>
+        <div>Action</div>
+        <div>Activity Details</div>
+        <div>Status</div>
       </div>
-      <div style={{ minHeight: '300px' }}>
-        {activity.length === 0 && <p style={{ padding: '2rem 0', color: '#64748b' }}>No recent governance logs.</p>}
-        {activity.map(log => (
-          <div key={log.id} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1.5fr 1fr', padding: '1rem 0', borderBottom: '1px solid #f1f5f9', alignItems: 'center', fontSize: '0.9rem' }}>
-            <div style={{ color: '#64748b' }}>{new Date(log.timestamp).toLocaleString()}</div>
+
+      {/* TABLE BODY */}
+      <div style={{ minHeight: '220px' }}>
+        {activity.length === 0 && (
+          <div style={{ padding: '3rem 1.5rem', textAlign: 'center', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.875rem' }}>
+            No recent activity logs recorded.
+          </div>
+        )}
+        {activity.map((log) => (
+          <div
+            key={log.id}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: '1.5fr 1fr 1.8fr 1fr',
+              padding: '1rem 1.5rem',
+              borderBottom: '1px solid var(--border-subtle)',
+              alignItems: 'center',
+              fontSize: '0.875rem',
+              transition: 'background-color 0.15s ease'
+            }}
+          >
+            <div style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
+              {new Date(log.timestamp).toLocaleString()}
+            </div>
             <div>
-              <span style={{ 
-                padding: '0.25rem 0.75rem', 
-                borderRadius: '9999px', 
-                fontSize: '0.75rem', 
-                fontWeight: 'bold', 
-                backgroundColor: log.action === 'CREATE' ? '#dcfce7' : '#e0e7ff',
-                color: log.action === 'CREATE' ? '#166534' : '#3730a3',
+              <span style={{
+                display: 'inline-block',
+                padding: '0.2rem 0.6rem',
+                borderRadius: 'var(--radius-pill)',
+                fontSize: '0.7rem',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: '700',
+                letterSpacing: '0.05em',
+                backgroundColor: log.action === 'CREATE' ? 'var(--accent-dim)' : 'var(--surface-color-elevated)',
+                color: log.action === 'CREATE' ? 'var(--accent-color)' : 'var(--text-primary)',
+                border: log.action === 'CREATE' ? '1px solid var(--accent-border)' : '1px solid var(--border-strong)',
                 textTransform: 'uppercase'
               }}>
                 {log.action}
               </span>
             </div>
-            <div style={{ fontWeight: '500', color: '#1e293b' }}>{log.details || '—'}</div>
-            <div style={{ color: '#10b981', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ width: '6px', height: '6px', backgroundColor: '#10b981', borderRadius: '50%', display: 'inline-block' }}></span>
+            <div style={{ fontWeight: '500', color: 'var(--text-primary)', wordBreak: 'break-word' }}>
+              {log.details || '—'}
+            </div>
+            <div style={{
+              color: 'var(--accent-color)',
+              fontWeight: '600',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.75rem'
+            }}>
+              <span style={{
+                width: '6px',
+                height: '6px',
+                backgroundColor: 'var(--accent-color)',
+                borderRadius: '50%',
+                display: 'inline-block'
+              }} />
               VERIFIED
             </div>
           </div>
         ))}
       </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '2rem', marginTop: '2rem', padding: '1rem 0', color: '#64748b', fontSize: '0.9rem', fontWeight: '500' }}>
-        <button style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontWeight: '500' }}>Previous Control</button>
-        <span>Cycle 1 of 2</span>
-        <button style={{ background: 'none', border: 'none', color: '#1e293b', cursor: 'pointer', fontWeight: '500' }}>Next Control</button>
+
+      {/* FOOTER */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '0.85rem 1.5rem',
+        borderTop: '1px solid var(--border-color)',
+        background: '#0b0d12',
+        color: 'var(--text-secondary)',
+        fontSize: '0.8rem',
+        fontFamily: 'var(--font-mono)'
+      }}>
+        <span>SHOWING RECENT ACTIONS</span>
+        <span>REAL-TIME AUDIT</span>
       </div>
     </div>
   );
