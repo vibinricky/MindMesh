@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -16,6 +18,7 @@ import lombok.Builder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class KnowledgeGraph {
 
     @Id
@@ -44,11 +47,14 @@ public class KnowledgeGraph {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "passwordHash"})
     private SystemAccount owner;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "knowledgeGraph", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConceptNode> nodes = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "knowledgeGraph", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SemanticEdge> edges = new ArrayList<>();
 
@@ -136,6 +142,7 @@ public class KnowledgeGraph {
         this.owner = owner;
     }
 
+    @JsonIgnore
     public List<ConceptNode> getNodes() {
         return nodes;
     }
@@ -144,6 +151,7 @@ public class KnowledgeGraph {
         this.nodes = nodes;
     }
 
+    @JsonIgnore
     public List<SemanticEdge> getEdges() {
         return edges;
     }

@@ -21,6 +21,7 @@ public class SemanticEdge {
 
     private Double weight = 1.0;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne
     @JoinColumn(name = "knowledge_graph_id")
     private KnowledgeGraph knowledgeGraph;
@@ -63,6 +64,7 @@ public class SemanticEdge {
 
     public void setWeight(Double weight) { this.weight = weight; }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public KnowledgeGraph getKnowledgeGraph() {
         return knowledgeGraph;
     }

@@ -12,8 +12,9 @@ const EdgeElement = ({ edge, sourceNode, targetNode }) => {
   const midY = (sy + ty) / 2;
 
   return (
-    <g style={{ cursor: 'pointer' }}>
+    <g id={`edge-element-${edge.id}`} style={{ cursor: 'pointer' }}>
       <line 
+        id={`edge-line-${edge.id}`}
         x1={sx} 
         y1={sy} 
         x2={tx} 
@@ -22,16 +23,16 @@ const EdgeElement = ({ edge, sourceNode, targetNode }) => {
         strokeWidth={Math.max(1.5, edge.weight || 1.5)} 
       />
       {edge.relationshipType && (
-        <g transform={`translate(${midX}, ${midY})`}>
+        <g id={`edge-label-${edge.id}`} transform={`translate(${midX}, ${midY})`}>
           <rect
-            x="-35"
+            x={-Math.max(36, Math.round((edge.relationshipType.length * 6.4 + 18) / 2))}
             y="-10"
-            width="70"
-            height="18"
+            width={Math.max(72, Math.round(edge.relationshipType.length * 6.4 + 18))}
+            height="20"
             fill="#0b0d12"
             stroke="#222631"
             strokeWidth="1"
-            rx="3"
+            rx="4"
           />
           <text 
             x="0" 
@@ -40,9 +41,9 @@ const EdgeElement = ({ edge, sourceNode, targetNode }) => {
             fontSize="9px" 
             fontFamily="'Space Mono', monospace"
             textAnchor="middle"
-            style={{ pointerEvents: 'none' }}
+            style={{ pointerEvents: 'none', userSelect: 'none' }}
           >
-            {edge.relationshipType.length > 10 ? edge.relationshipType.substring(0, 10) + '..' : edge.relationshipType}
+            {edge.relationshipType}
           </text>
         </g>
       )}

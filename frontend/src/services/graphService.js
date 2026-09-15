@@ -30,6 +30,11 @@ export const createGraph = async (graphData) => {
   return response.data;
 };
 
+export const generateGraph = async (prompt, isPublic = false) => {
+  const response = await api.post('/graphs/generate', { prompt, isPublic });
+  return response.data;
+};
+
 export const updateGraph = async (id, graphData) => {
   const response = await api.put(`/graphs/${id}`, graphData);
   return response.data;
@@ -97,6 +102,7 @@ const graphService = {
   getGraphById,
   getFullGraph,
   createGraph,
+  generateGraph,
   updateGraph,
   deleteGraph,
   calculateComplexity,

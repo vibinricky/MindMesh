@@ -73,14 +73,24 @@ public class GraphOrchestratorService {
     }
 
     public KnowledgeGraph createGraph(KnowledgeGraph graph) {
+        if (graph.getOwner() == null && graphService != null) {
+            graph.setOwner(graphService.getCurrentUser());
+        }
+        if (graph.getIsPublic() == null) {
+            graph.setIsPublic(false);
+        }
         KnowledgeGraph saved = knowledgeGraphRepository.save(graph);
-        eventPublisher.publishEvent(new GraphCreatedEvent(this, saved.getId(), saved.getOwner() != null ? saved.getOwner().getId() : null));
+        if (eventPublisher != null) {
+            eventPublisher.publishEvent(new GraphCreatedEvent(this, saved.getId(), saved.getOwner() != null ? saved.getOwner().getId() : null));
+        }
         return saved;
     }
 
     public void deleteGraph(KnowledgeGraph graph) {
         knowledgeGraphRepository.deleteById(graph.getId());
-        eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(), graph.getOwner() != null ? graph.getOwner().getId() : null));
+        if (eventPublisher != null) {
+            eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(), graph.getOwner() != null ? graph.getOwner().getId() : null));
+        }
     }
 
     public KnowledgeGraph getById(Long id) {
@@ -99,7 +109,11 @@ public class GraphOrchestratorService {
     public void deleteById(Long id) {
         KnowledgeGraph graph = knowledgeGraphRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("KnowledgeGraph not found with id: " + id));
-        knowledgeGraphRepository.deleteById(graph.getId());
+        if (graphService != null) {
+            graphService.deleteGraph(id);
+        } else {
+            knowledgeGraphRepository.deleteById(graph.getId());
+        }
         if (eventPublisher != null) {
             eventPublisher.publishEvent(new GraphDeletedEvent(this, graph.getId(),
                     graph.getOwner() != null ? graph.getOwner().getId() : null));

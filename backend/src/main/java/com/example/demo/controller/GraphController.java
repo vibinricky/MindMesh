@@ -43,6 +43,9 @@ public class GraphController {
     @Autowired
     private SystemAccountRepository systemAccountRepository;
 
+    @Autowired
+    private com.example.demo.service.GeminiGraphService geminiGraphService;
+
     public GraphController() {}
 
     public GraphController(GraphOrchestratorService graphOrchestratorService) {
@@ -82,15 +85,30 @@ public class GraphController {
     @GetMapping("/{id}/full")
     public ResponseEntity<GraphDetailDto> getFullGraph(@PathVariable Long id) {
         KnowledgeGraph graph = graphOrchestratorService.getById(id);
+        Long ownerId = graph.getOwner() != null ? graph.getOwner().getId() : null;
+        String ownerUsername = graph.getOwner() != null ? graph.getOwner().getUsername() : "Unknown";
         return ResponseEntity.ok(new GraphDetailDto(graph.getId(), graph.getTitle(), graph.getDescription(), graph.getDomain(),
-                graph.getIsPublic(), graph.getComplexityScore(), graph.getCreatedAt(), graph.getOwner().getId(),
-                graph.getOwner().getUsername(), canvasService.nodes(id), canvasService.edges(id)));
+                graph.getIsPublic(), graph.getComplexityScore(), graph.getCreatedAt(), ownerId,
+                ownerUsername, canvasService.nodes(id), canvasService.edges(id)));
     }
 
     @PostMapping
     public ResponseEntity<KnowledgeGraph> createGraph(@Valid @RequestBody KnowledgeGraph graph) {
+        if (graph.getOwner() == null) {
+            graph.setOwner(graphService.getCurrentUser());
+        }
+        if (graph.getIsPublic() == null) {
+            graph.setIsPublic(false);
+        }
         KnowledgeGraph created = graphOrchestratorService.createGraph(graph);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/generate")
+    @PreAuthorize("hasAuthority('ROLE_RESEARCH_STRATEGIST')")
+    public ResponseEntity<GraphDetailDto> generateGraph(@Valid @RequestBody com.example.demo.dto.GenerateGraphRequest request) {
+        GraphDetailDto generated = geminiGraphService.generateKnowledgeGraph(request.prompt(), request.isPublic());
+        return new ResponseEntity<>(generated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

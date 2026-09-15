@@ -20,6 +20,7 @@ public class ConceptNode {
 
     private Double yPosition;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne
     @JoinColumn(name = "knowledge_graph_id")
     private KnowledgeGraph knowledgeGraph;
@@ -62,6 +63,7 @@ public class ConceptNode {
         this.yPosition = yPosition;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public KnowledgeGraph getKnowledgeGraph() {
         return knowledgeGraph;
     }

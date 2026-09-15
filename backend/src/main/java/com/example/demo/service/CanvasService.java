@@ -124,7 +124,9 @@ public class CanvasService {
         if (duplicate) throw new IllegalArgumentException("That connection already exists");
     }
     private void ensureOwner(KnowledgeGraph graph) {
-        if (!graph.getOwner().getId().equals(graphs.getCurrentUser().getId())) throw new org.springframework.security.access.AccessDeniedException("Only the graph owner can edit this mesh");
+        if (graph.getOwner() == null || !graph.getOwner().getId().equals(graphs.getCurrentUser().getId())) {
+            throw new org.springframework.security.access.AccessDeniedException("Only the graph owner can edit this mesh");
+        }
     }
     private void log(KnowledgeGraph graph, String action, String details) {
         ActivityLog log = new ActivityLog();

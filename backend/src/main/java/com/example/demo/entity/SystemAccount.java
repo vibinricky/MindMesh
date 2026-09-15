@@ -1,9 +1,12 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "system_account")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class SystemAccount {
 
     @Id
@@ -13,6 +16,7 @@ public class SystemAccount {
     @Column(unique = true, nullable = false, length = 100)
     private String username;
 
+    @JsonIgnore
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
@@ -40,6 +44,7 @@ public class SystemAccount {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPasswordHash() {
         return passwordHash;
     }

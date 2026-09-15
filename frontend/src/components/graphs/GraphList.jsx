@@ -6,6 +6,7 @@ import graphService from '../../services/graphService';
 import EmptyState from '../common/EmptyState';
 import ErrorHandler from '../ErrorHandler';
 import GraphForm from './GraphForm';
+import GenerateGraphModal from './GenerateGraphModal';
 
 const GraphList = ({ type }) => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const GraphList = ({ type }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [showForm, setShowForm] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [editingGraph, setEditingGraph] = useState(null);
 
   const loadGraphs = (page = 0) => {
@@ -61,7 +63,7 @@ const GraphList = ({ type }) => {
     loadGraphs(currentPage);
   };
 
-  const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST';
+  const isStrategist = user?.role === 'ROLE_RESEARCH_STRATEGIST' || user?.role === 'RESEARCH_STRATEGIST' || user?.role?.includes('ADMIN');
 
   return (
     <div className="container">
@@ -88,13 +90,29 @@ const GraphList = ({ type }) => {
         </div>
 
         {isStrategist && (
-          <button
-            onClick={() => setShowForm(true)}
-            className="btn primary"
-          >
-            <span>+ Create New Mesh</span>
-            <span>↗</span>
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              onClick={() => setShowGenerateModal(true)}
+              style={{
+                background: 'linear-gradient(135deg, rgba(220, 255, 2, 0.12), rgba(16, 185, 129, 0.12))',
+                border: '1px solid var(--accent-color)',
+                color: 'var(--accent-color)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                cursor: 'pointer'
+              }}
+            >
+              <span>✨ Generate Graph with AI</span>
+            </button>
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn primary"
+            >
+              <span>+ Create New Mesh</span>
+              <span>↗</span>
+            </button>
+          </div>
         )}
       </div>
 
@@ -111,10 +129,26 @@ const GraphList = ({ type }) => {
           <EmptyState 
             message="You haven't built any knowledge graphs yet." 
             action={isStrategist && (
-              <button onClick={() => setShowForm(true)} className="btn primary mt-4">
-                <span>Build First Mesh</span>
-                <span>↗</span>
-              </button>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => setShowGenerateModal(true)}
+                  style={{
+                    background: 'linear-gradient(135deg, rgba(220, 255, 2, 0.12), rgba(16, 185, 129, 0.12))',
+                    border: '1px solid var(--accent-color)',
+                    color: 'var(--accent-color)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <span>✨ Generate Graph with AI</span>
+                </button>
+                <button onClick={() => setShowForm(true)} className="btn primary">
+                  <span>Build First Mesh</span>
+                  <span>↗</span>
+                </button>
+              </div>
             )} 
           />
         </div>
@@ -184,7 +218,7 @@ const GraphList = ({ type }) => {
                         <span>Open Canvas</span>
                         <span>↗</span>
                       </Link>
-                      {isStrategist && graph.ownerId === user?.id && (
+                      {isStrategist && (graph.ownerId === user?.id || String(graph.ownerId) === String(user?.id)) && (
                         <>
                           <button
                             onClick={() => handleEdit(graph)}
@@ -254,6 +288,13 @@ const GraphList = ({ type }) => {
         <GraphForm 
           graph={editingGraph} 
           onClose={closeForm} 
+        />
+      )}
+
+      {showGenerateModal && (
+        <GenerateGraphModal
+          onClose={() => setShowGenerateModal(false)}
+          onGenerated={() => loadGraphs(0)}
         />
       )}
     </div>
