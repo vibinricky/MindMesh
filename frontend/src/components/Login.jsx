@@ -85,7 +85,7 @@ const Login = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              placeholder="MindMesh Username"
               className="y2k-input"
               autoComplete="username"
               required
@@ -105,7 +105,7 @@ const Login = () => {
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder="Enter Password"
               className="y2k-input"
               autoComplete="current-password"
               required
