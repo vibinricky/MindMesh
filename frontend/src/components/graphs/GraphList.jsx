@@ -8,7 +8,7 @@ import ErrorHandler from '../ErrorHandler';
 import GraphForm from './GraphForm';
 import GenerateGraphModal from './GenerateGraphModal';
 
-const GraphList = ({ type }) => {
+const GraphList = ({ type = 'my' }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
@@ -127,7 +127,7 @@ const GraphList = ({ type }) => {
       {!loading && items.length === 0 && !error && (
         <div className="card" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
           <EmptyState 
-            message="You haven't built any knowledge graphs yet." 
+            message="You haven't built any interactive graphs yet" 
             action={isStrategist && (
               <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <button

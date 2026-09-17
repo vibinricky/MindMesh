@@ -51,8 +51,14 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.token = action.payload.token;
-        state.user = action.payload.user;
+        state.token = action.payload?.token || state.token;
+        const rawUser = action.payload?.user || action.payload;
+        state.user = rawUser
+          ? {
+              ...rawUser,
+              role: rawUser.role || rawUser.domainRole,
+            }
+          : null;
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
